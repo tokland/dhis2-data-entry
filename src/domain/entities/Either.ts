@@ -19,14 +19,6 @@ export class Either<Error, Data> {
         }
     }
 
-    isError(): this is this & { value: EitherValueError<Error> } {
-        return this.value.type === "error";
-    }
-
-    isSuccess(): this is this & { value: EitherValueSuccess<Data> } {
-        return this.value.type === "success";
-    }
-
     map<Data1>(fn: (data: Data) => Data1): Either<Error, Data1> {
         return this.flatMap(data => new Either<Error, Data1>({ type: "success", data: fn(data) }));
     }
@@ -49,12 +41,44 @@ export class Either<Error, Data> {
         });
     }
 
+    static isSuccess<Error, Data>(value: EitherValue<Error, Data>): value is EitherValueSuccess<Data> {
+        return value.type === "success";
+    }
+
+    static isError<Error, Data>(value: EitherValue<Error, Data>): value is EitherValueError<Error> {
+        return !this.isSuccess(value);
+    }
+
+    isError(): boolean {
+        return Either.isError(this.value);
+    }
+
+    isSuccess(): boolean {
+        return Either.isSuccess(this.value);
+    }
+
     static error<Error>(error: Error) {
         return new Either<Error, never>({ type: "error", error });
     }
 
     static success<Error, Data>(data: Data) {
         return new Either<Error, Data>({ type: "success", data });
+    }
+
+    static join<Error, Data>(eithers: Array<Either<Error, Data>>): Either<Error, Data[]> {
+        const values: Data[] = [];
+
+        for (const either of eithers) {
+            const { value } = either;
+
+            if (Either.isSuccess(value)) {
+                values.push(value.data);
+            } else if (Either.isError(value)) {
+                return Either.error(value.error);
+            }
+        }
+
+        return Either.success(values);
     }
 
     static map2<Error, Res, Data1, Data2>(

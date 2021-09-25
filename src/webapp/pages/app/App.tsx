@@ -17,26 +17,23 @@ import { AppConfig } from "./AppConfig";
 import muiThemeLegacy from "./themes/dhis2-legacy.theme";
 import { muiTheme } from "./themes/dhis2.theme";
 
-const App: React.FC<AppProps> = ({ api, d2, instance }) => {
+const App: React.FC<AppProps> = ({ api, d2 }) => {
     const [showShareButton, setShowShareButton] = useState(false);
     const [loading, setLoading] = useState(true);
     const [appContext, setAppContext] = useState<AppContextState | null>(null);
 
     useEffect(() => {
         async function setup() {
-            const compositionRoot = getCompositionRoot(instance);
-            const { data: currentUser } = await compositionRoot.instance.getCurrentUser().runAsync();
-            if (!currentUser) throw new Error("User not logged in");
-
+            const compositionRoot = getCompositionRoot(api);
             const isShareButtonVisible = _(appConfig).get("appearance.showShareButton") || false;
 
-            setAppContext({ api, currentUser, compositionRoot });
+            setAppContext({ api, compositionRoot });
             setShowShareButton(isShareButtonVisible);
             initFeedbackTool(d2, appConfig);
             setLoading(false);
         }
         setup();
-    }, [d2, api, instance]);
+    }, [d2, api]);
 
     if (loading) return null;
 

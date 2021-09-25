@@ -28,13 +28,12 @@ export function getTestD2() {
 export function getTestContext() {
     // Mock api was working with axios but not with fetch
     const { api } = getMockApi();
-    const instance = new Instance({ url: "http://localhost:8080" });
     const context = {
         api: api,
         d2: getTestD2(),
         currentUser: getTestUser(),
         config: getTestConfig(),
-        compositionRoot: getCompositionRoot(instance),
+        compositionRoot: getCompositionRoot(api),
     };
 
     return { api, context };

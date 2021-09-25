@@ -10,9 +10,7 @@ import App from "./webapp/pages/app/App";
 
 async function getBaseUrl() {
     if (process.env.NODE_ENV === "development") {
-        const baseUrl = process.env.REACT_APP_DHIS2_BASE_URL || "http://localhost:8080";
-        console.debug(`[DEV] DHIS2 instance: ${baseUrl}`);
-        return baseUrl.replace(/\/*$/, "");
+        return "/dhis2";
     } else {
         const { data: manifest } = await axios.get("manifest.webapp");
         return manifest.activities.dhis.href;
