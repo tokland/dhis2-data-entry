@@ -12,7 +12,7 @@ export const DataEntryPage: React.FC<DataEntryPageProps> = React.memo(() => {
     const dataElement: DataElement = {
         id: "WmKwIxATeAB",
         name: "Country Grant - # Training Events",
-        code: "DE1",
+        code: "TRAINING_EVENTS",
         comment: "Some comment",
         visible: true,
         status: { type: "enabled" },
@@ -24,7 +24,7 @@ export const DataEntryPage: React.FC<DataEntryPageProps> = React.memo(() => {
     const section1: DataFormSection = {
         id: "section1",
         name: "Section 1",
-        dataElementIds: ["de1"],
+        dataElementIds: ["WmKwIxATeAB"],
         indicatorIds: [],
         visible: true,
     };
@@ -34,7 +34,7 @@ export const DataEntryPage: React.FC<DataEntryPageProps> = React.memo(() => {
         name: "Example form",
         sections: [section1],
         organisationUnits: new Set(["qhFcrUfkuL6"]),
-        dataElements: { de1: dataElement },
+        dataElements: { WmKwIxATeAB: dataElement },
         indicators: {},
         logic: {
             entities: { dataElements: {} },

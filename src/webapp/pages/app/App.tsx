@@ -28,8 +28,8 @@ const App: React.FC<AppProps> = ({ api, d2 }) => {
             const isShareButtonVisible = _(appConfig).get("appearance.showShareButton") || false;
 
             setAppContext({ api, compositionRoot });
-            setShowShareButton(isShareButtonVisible);
-            initFeedbackTool(d2, appConfig);
+            //setShowShareButton(isShareButtonVisible);
+            //initFeedbackTool(d2, appConfig);
             setLoading(false);
         }
         setup();
