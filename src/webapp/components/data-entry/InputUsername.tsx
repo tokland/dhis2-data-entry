@@ -13,7 +13,7 @@ import { InnerComponentPropsFor } from "./FormComponent";
 type User = { username: string };
 
 export const InputUsername: React.FC<InnerComponentPropsFor<DataElementText>> = React.memo(props => {
-    const { dataElement, onChange, style } = props;
+    const { value, onChange, style } = props;
     const { getUsers } = useDataEntryContext();
     const snackbar = useSnackbar();
     const [isSearching, setIsSearching] = React.useState(false);
@@ -25,12 +25,12 @@ export const InputUsername: React.FC<InnerComponentPropsFor<DataElementText>> = 
 
     const [options, setOptions] = React.useState<User[]>([]);
     const [isOpen, { enable: open, disable: close }] = useBooleanState(false);
-    const [value, setValue] = React.useState(dataElement.value);
+    const [stateValue, setStateValue] = React.useState(value);
 
     const searchUsers = useCallbackEffect(
         React.useCallback(
             (value: string) => {
-                setValue(value);
+                setStateValue(value);
                 setIsSearching(true);
 
                 return getUsers(value).run(
@@ -55,14 +55,11 @@ export const InputUsername: React.FC<InnerComponentPropsFor<DataElementText>> = 
         [searchUsers]
     );
 
-    React.useEffect(() => setValue(dataElement.value), [dataElement.value]);
+    React.useEffect(() => setStateValue(value), [value]);
 
     const fullStyle = React.useMemo(() => ({ ...style, ...styles.autocomplete }), [style]);
 
-    const user = React.useMemo<User | null>(
-        () => (dataElement.value ? { username: dataElement.value } : null),
-        [dataElement.value]
-    );
+    const user = React.useMemo<User | null>(() => (value ? { username: value } : null), [value]);
 
     const openSelectorAndShowInitialSearch = React.useCallback(() => {
         open();
@@ -71,8 +68,8 @@ export const InputUsername: React.FC<InnerComponentPropsFor<DataElementText>> = 
 
     const closeSelectorAndRestoreValue = React.useCallback(() => {
         close();
-        setValue(dataElement.value);
-    }, [setValue, close, dataElement]);
+        setStateValue(value);
+    }, [setStateValue, close, value]);
 
     // Autocomplete shows a warning if the current value is not found as an option
     const userValue = isOpen ? null : user;
@@ -84,7 +81,7 @@ export const InputUsername: React.FC<InnerComponentPropsFor<DataElementText>> = 
             options={optionsWithUser}
             filterOptions={_.identity}
             value={userValue}
-            inputValue={value || ""}
+            inputValue={stateValue || ""}
             onInputChange={searchUsersFromEvent}
             getOptionLabel={option => option.username}
             open={isOpen}

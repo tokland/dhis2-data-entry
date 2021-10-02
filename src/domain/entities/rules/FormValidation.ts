@@ -1,12 +1,10 @@
 import _ from "lodash";
 import { FutureData } from "../../../data/future";
-import i18n from "../../../locales";
 import { Future } from "../../../utils/future";
-import { Maybe } from "../../../utils/ts-utils";
 import { Id } from "../Base";
 import { Config } from "../Config";
 import { DataElement, DataElementCode, validateDataElementValue } from "../DataElement";
-import { DataForm } from "../DataForm";
+import { DataForm, getValue } from "../DataForm";
 import { getDataElementsFromDataForm } from "../Rule";
 import { buildValidationError, Validation } from "./Validation";
 
@@ -33,7 +31,7 @@ export function validate(options: {
     const { config, dataForm, dataElement } = options;
     const { validations } = dataForm.logic;
 
-    const baseError = validateDataElementValue(dataElement, dataElement.value);
+    const baseError = validateDataElementValue(dataElement, getValue(dataForm, dataElement));
     if (baseError) return validationError(baseError);
 
     const validationsForDataElement = validations.filter(validation =>
@@ -58,32 +56,4 @@ export function validationError(message: string): Validation$ {
 
 export function validationWarning(message: string): Validation$ {
     return Future.success([{ type: "warning", message }]);
-}
-
-export function validateMinValue<DEKey extends string>(
-    dataElementCode: string,
-    minValue: number
-): FormValidation<DEKey> {
-    return {
-        dataElement: dataElementCode,
-        validate({ dataElement }) {
-            const value = dataElement.value as Maybe<number>;
-            const isValid = value === undefined || value >= minValue;
-            return isValid ? noErrors : validationError(i18n.t("Min value is {{minValue}}", { minValue }));
-        },
-    };
-}
-
-export function validateMaxValue<DEKey extends string>(
-    dataElementCode: string,
-    maxValue: number
-): FormValidation<DEKey> {
-    return {
-        dataElement: dataElementCode,
-        validate({ dataElement }) {
-            const value = dataElement.value as Maybe<number>;
-            const isValid = value === undefined || value <= maxValue;
-            return isValid ? noErrors : validationError(i18n.t("Max value is {{maxValue}}", { maxValue }));
-        },
-    };
 }

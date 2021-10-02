@@ -1,5 +1,4 @@
 import _ from "lodash";
-import { Dictionary } from "../types/utils";
 
 type ArgumentsCache = Map<string, unknown>;
 type FunctionCache = Map<unknown, ArgumentsCache>;
@@ -64,7 +63,7 @@ export function memoize<Obj extends object | void, Args extends any[], U>(fn: (.
 }
 
 // Function to clear memoized storage
-export const clearCache = (fn: Function, instance?: Dictionary<any>) => {
+export const clearCache = (fn: Function, instance?: Record<string, any>) => {
     // Clear method entries
     const methodEntries = methodCache.get(fn);
     if (methodEntries && !instance) throw new Error("Cache clear must forward instance");

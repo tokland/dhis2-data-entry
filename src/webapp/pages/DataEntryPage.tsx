@@ -17,14 +17,24 @@ export const DataEntryPage: React.FC<DataEntryPageProps> = React.memo(() => {
         visible: true,
         status: { type: "enabled" },
         description: "description",
-        type: "NUMBER",
-        value: undefined,
+        type: "INTEGER_ZERO_OR_POSITIVE",
+    };
+
+    const dataElement2: DataElement = {
+        id: "RivqZao3W5N",
+        name: "Country Grant - Inherit Template",
+        code: "INHERIT_TEMPLATE",
+        comment: "Some comment",
+        visible: true,
+        status: { type: "enabled" },
+        description: "description",
+        type: "BOOLEAN",
     };
 
     const section1: DataFormSection = {
         id: "section1",
         name: "Section 1",
-        dataElementIds: ["WmKwIxATeAB"],
+        dataElementIds: ["WmKwIxATeAB", "RivqZao3W5N"],
         indicatorIds: [],
         visible: true,
     };
@@ -34,7 +44,8 @@ export const DataEntryPage: React.FC<DataEntryPageProps> = React.memo(() => {
         name: "Example form",
         sections: [section1],
         organisationUnits: new Set(["qhFcrUfkuL6"]),
-        dataElements: { WmKwIxATeAB: dataElement },
+        dataElements: { [dataElement.id]: dataElement, [dataElement2.id]: dataElement2 },
+        values: {},
         indicators: {},
         logic: {
             entities: { dataElements: {} },

@@ -2,19 +2,20 @@ import _ from "lodash";
 import { useSnackbar } from "@eyeseetea/d2-ui-components";
 import React, { CSSProperties } from "react";
 import styled, { css } from "styled-components";
-import { DataElement, setDataValue } from "../../../domain/entities/DataElement";
+import { DataElement, ValueOf } from "../../../domain/entities/DataElement";
 import { useRefresher } from "../../hooks/use-refresher";
 import { DataElementInfo } from "./DataElementInfo";
 import { DataEntry } from "../../../domain/entities/DataEntry";
 import { useCallbackEffect } from "../../hooks/use-callback-effect";
 import { useDataEntryContext } from "./data-entry-context";
-import { DataForm, setDataFormDataElement } from "../../../domain/entities/DataForm";
+import { DataForm, getValue, setDataFormDataElement, setDataValue } from "../../../domain/entities/DataForm";
 import { getMessages } from "../../../domain/entities/rules/Validation";
 
 export interface InnerComponentPropsFor<DE extends DataElement> {
     style: CSSProperties;
     dataElement: DE;
-    onChange(value: DE["value"]): void;
+    value: ValueOf<DE>;
+    onChange(value: ValueOf<DE>): void;
 }
 
 export type SavingState = "original" | "saving" | "saveSuccessful" | "saveError";
@@ -35,15 +36,21 @@ export function FormComponent<DE extends DataElement>(props: FormComponentPropsF
     const [savingState, setSavingState] = React.useState<SavingState>("original");
 
     const save = React.useCallback(
-        (value: DE["value"]) => {
-            const valueHasChanged = value !== dataElement.value;
+        (value: ValueOf<DE>) => {
+            const valueHasChanged = value !== getValue(dataForm, dataElement);
             if (!valueHasChanged) return;
 
-            const newDataElement = setDataValue(dataElement, value);
+            const dataFormUpdated = setDataValue(dataForm, dataElement, value);
             const prevSavingState = savingState;
             setSavingState("saving");
 
-            return saveDataValue({ orgUnitPath, dataForm, period, dataElement: newDataElement }).run(
+            return saveDataValue({
+                orgUnitPath,
+                dataForm: dataFormUpdated,
+                dataFormPrev: dataForm,
+                period,
+                dataElement,
+            }).run(
                 postDataValueResult => {
                     const { dataForm: dataFormUpdated, validation } = postDataValueResult;
                     const { warnings } = getMessages(validation);
@@ -98,6 +105,7 @@ export function FormComponent<DE extends DataElement>(props: FormComponentPropsF
     return (
         <div>
             <Component
+                value={getValue(dataForm, dataElement)}
                 key={refreshKey}
                 style={feedbackStyles[savingState]}
                 dataElement={dataElement}

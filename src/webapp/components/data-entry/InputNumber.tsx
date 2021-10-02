@@ -5,15 +5,15 @@ import { formatNumber } from "../../../utils/basic";
 import { makeStyles } from "@material-ui/core";
 
 export const InputNumber: React.FC<InnerComponentPropsFor<DataElementNumber>> = React.memo(props => {
-    const { dataElement, onChange, style } = props;
+    const { dataElement, value, onChange, style } = props;
 
-    const [value, setValue] = React.useState(dataElement.value);
+    const [stateValue, setStateValue] = React.useState(value);
 
-    React.useEffect(() => setValue(dataElement.value), [dataElement.value]);
+    React.useEffect(() => setStateValue(value), [value]);
 
     const updateState = React.useCallback<ChangeEventHandler<HTMLInputElement>>(
-        ev => setValue(getValue(ev)),
-        [setValue]
+        ev => setStateValue(getValue(ev)),
+        [setStateValue]
     );
 
     const notifyChange = React.useCallback<ChangeEventHandler<HTMLInputElement>>(
@@ -30,7 +30,7 @@ export const InputNumber: React.FC<InnerComponentPropsFor<DataElementNumber>> = 
         const disabledReason = dataElement.status.type === "disabled" ? dataElement.status.reason : undefined;
         const title = disabledReason || undefined;
         const decimals = isInteger ? 0 : 2;
-        const strValue = value !== undefined ? formatNumber(value, decimals) : "";
+        const strValue = stateValue !== undefined ? formatNumber(stateValue, decimals) : "";
 
         return <Input disabled={true} className={classes.disabled} title={title} value={strValue} />;
     } else {
@@ -40,7 +40,7 @@ export const InputNumber: React.FC<InnerComponentPropsFor<DataElementNumber>> = 
                 style={style}
                 type="number"
                 step={step}
-                value={value === undefined ? "" : value}
+                value={stateValue === undefined ? "" : stateValue}
                 onChange={updateState}
                 onBlur={notifyChange}
             />

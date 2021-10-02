@@ -5,7 +5,7 @@ import { Maybe } from "../../utils/ts-utils";
 import { Code, Id } from "./Base";
 import { Config } from "./Config";
 import { DataElementId } from "./DataElement";
-import { DataForm } from "./DataForm";
+import { DataForm, getValue } from "./DataForm";
 import { Either } from "./Either";
 
 export type Indicator = StandardIndicator | SqlViewIndicator;
@@ -45,7 +45,9 @@ export function evalIndicatorExpression(
 ): Either<EvalError, string> {
     const values = _(dataForm.dataElements)
         .values()
-        .map(dataElement => [dataElement.id, dataElement.value?.toString() || ""] as [Id, string])
+        .map(
+            dataElement => [dataElement.id, getValue(dataForm, dataElement)?.toString() || ""] as [Id, string]
+        )
         .fromPairs()
         .value();
 
@@ -69,7 +71,9 @@ function getExpressionsAsString(
     config: Config,
     options: { emptyValuesAsZeros?: boolean } = {}
 ): Either<EvalError, string> {
-    const strExpressionEs = expressions.map(expression => getExpressionAsString(expression, values, config, options));
+    const strExpressionEs = expressions.map(expression =>
+        getExpressionAsString(expression, values, config, options)
+    );
     return Either.join(strExpressionEs).map(parts => parts.join(" "));
 }
 
@@ -136,6 +140,6 @@ function evalJs<Result>(s: string): Either<string, Result> {
     try {
         return success(eval(s) as Result); // eslint-disable-line no-eval
     } catch (err) {
-        return error(err.message);
+        return error((err as Error).message);
     }
 }

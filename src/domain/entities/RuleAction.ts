@@ -1,7 +1,7 @@
 import _ from "lodash";
 import { Code } from "./Base";
-import { DataElement, DataElementStatus, setDataElementValueFromString } from "./DataElement";
-import { DataForm, setDataFormDataElement } from "./DataForm";
+import { DataElement, DataElementStatus } from "./DataElement";
+import { DataForm, setDataElementValueFromString, setDataFormDataElement } from "./DataForm";
 
 // TODO: setSectionVisibility sectionName -> Section
 export type RuleAction =
@@ -54,7 +54,7 @@ export function runAction(dataForm: DataForm, action: RuleAction): DataForm {
             const { dataElement, value } = action;
             const dataFormDataElement = dataForm.dataElements[dataElement.id];
             return dataFormDataElement
-                ? setDataFormDataElement(dataForm, setDataElementValueFromString(dataFormDataElement, value))
+                ? setDataElementValueFromString(dataForm, dataFormDataElement, value)
                 : dataForm;
         }
 

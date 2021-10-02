@@ -6,7 +6,7 @@ import { DateTime } from "luxon";
 import { fromJsDate, toJsDate } from "../../../domain/entities/DateObj";
 
 export const InputDate: React.FC<InnerComponentPropsFor<DataElementDate>> = React.memo(props => {
-    const { dataElement, onChange, style } = props;
+    const { onChange, style, value } = props;
 
     const notifyChange = React.useCallback(
         (date: DateTime | null) => {
@@ -16,12 +16,12 @@ export const InputDate: React.FC<InnerComponentPropsFor<DataElementDate>> = Reac
         [onChange]
     );
 
-    const value = dataElement.value ? toJsDate(dataElement.value) : null;
+    const dateValue = value ? toJsDate(value) : null;
 
     return (
         <DatePicker
             style={style}
-            value={value}
+            value={dateValue}
             format="MM/dd/yyyy"
             onChange={notifyChange}
             autoOk={true}

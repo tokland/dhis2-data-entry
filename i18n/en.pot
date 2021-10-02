@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2021-09-25T12:29:22.857Z\n"
-"PO-Revision-Date: 2021-09-25T12:29:22.857Z\n"
+"POT-Creation-Date: 2021-10-02T11:55:45.599Z\n"
+"PO-Revision-Date: 2021-10-02T11:55:45.599Z\n"
 
 msgid "Value should be a percentage between 0 and 100"
 msgstr ""
@@ -15,12 +15,6 @@ msgid "Value should be a positive integer"
 msgstr ""
 
 msgid "Value should be an integer"
-msgstr ""
-
-msgid "Min value is {{minValue}}"
-msgstr ""
-
-msgid "Max value is {{maxValue}}"
 msgstr ""
 
 msgid "Add"

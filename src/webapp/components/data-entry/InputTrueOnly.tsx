@@ -5,8 +5,7 @@ import { DataElementBoolean } from "../../../domain/entities/DataElement";
 import { InnerComponentPropsFor } from "./FormComponent";
 
 export const InputTrueOnly: React.FC<InnerComponentPropsFor<DataElementBoolean>> = React.memo(props => {
-    const { dataElement, onChange, style } = props;
-    const { value } = dataElement;
+    const { value, onChange, style } = props;
 
     const notifyChange = React.useCallback<NonNullable<SwitchBaseProps["onChange"]>>(
         () => onChange(!value),

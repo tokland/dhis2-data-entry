@@ -1,12 +1,13 @@
 import _ from "lodash";
 import { Code, Id } from "./Base";
-import { DataElement, setDataElementValueFromString } from "./DataElement";
+import { DataElement, DataElementId, DataElementValue, getValueFromString, ValueOf } from "./DataElement";
 import { DataValue } from "./DataValue";
 import { Indicator, IndicatorId } from "./Indicator";
 import { applyRulesToDataForm } from "./Rule";
 import { DataFormLogic } from "./DataFormLogic";
 import { sortDataItems, SortingInfo } from "./DataItem";
 import { OrgUnit } from "./OrgUnit";
+import { Maybe } from "../../utils/ts-utils";
 
 // TODO: Create a DataSet that contains no values, current orgUnit, nor visibility
 export interface DataForm {
@@ -19,10 +20,32 @@ export interface DataForm {
     logic: DataFormLogic;
     maxOrgUnitLevel: number;
     childrenOrgUnits: OrgUnit[];
+    values: Record<DataElementId, Maybe<DataElementValue>>;
     indicatorValues: Record<IndicatorId, string>;
     hidden: { indicators: Set<Code> };
     periods: string[];
     constants: Record<Code, number>;
+}
+
+export function getValue<DE extends DataElement>(dataForm: DataForm, dataElement: DE): ValueOf<DE> {
+    return dataForm.values[dataElement.id] as ValueOf<DE>;
+}
+
+export function setDataValue<DE extends DataElement>(
+    dataForm: DataForm,
+    dataElement: DE,
+    value: ValueOf<DE>
+): DataForm {
+    return { ...dataForm, values: { ...dataForm.values, [dataElement.id]: value } };
+}
+
+export function setDataElementValueFromString<DE extends DataElement>(
+    dataForm: DataForm,
+    dataElement: DE,
+    strValue: string
+): DataForm {
+    const value = getValueFromString<DE>(dataElement, strValue);
+    return setDataValue(dataForm, dataElement, value);
 }
 
 export interface DataFormSection {
@@ -49,18 +72,20 @@ export function setDataFormDataElement(dataForm: DataForm, dataElement: DataElem
 export function updateDataValuesWithoutProcessing(dataForm: DataForm, dataValues: DataValue[]): DataForm {
     const valueByDataElementId = _.keyBy(dataValues, dv => dv.dataElementId);
 
-    const dataElements = _.mapValues(dataForm.dataElements, dataElement => {
-        const dataValue = valueByDataElementId[dataElement.id];
-        const baseDataElement = dataValue ? { ...dataElement, comment: dataValue.comment } : dataElement;
+    const dataFormUpdated = _(dataForm.dataElements)
+        .values()
+        .reduce((dataFormAcc, dataElement) => {
+            const dataValue = valueByDataElementId[dataElement.id];
+            const baseDataElement = dataValue ? { ...dataElement, comment: dataValue.comment } : dataElement;
 
-        if (dataValue?.value !== undefined) {
-            return setDataElementValueFromString(baseDataElement, dataValue?.value);
-        } else {
-            return baseDataElement;
-        }
-    });
+            if (dataValue?.value !== undefined) {
+                return setDataElementValueFromString(dataFormAcc, baseDataElement, dataValue?.value);
+            } else {
+                return dataFormAcc;
+            }
+        }, dataForm);
 
-    return { ...dataForm, dataElements };
+    return dataFormUpdated;
 }
 
 export function updateDataValues(dataForm: DataForm, dataValues: DataValue[]): DataForm {

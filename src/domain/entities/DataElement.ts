@@ -15,11 +15,6 @@ interface DataElementBase {
     comment: Maybe<string>;
 }
 
-export type DataElementStatus = { type: "enabled" } | { type: "disabled"; reason: string };
-
-export type DataElementId = Id;
-export type DataElementCode = string;
-
 export type DataElement =
     | DataElementText
     | DataElementBoolean
@@ -27,32 +22,47 @@ export type DataElement =
     | DataElementDate
     | DataElementOption;
 
+export type DataElementStatus = { type: "enabled" } | { type: "disabled"; reason: string };
+export type DataElementId = Id;
+export type DataElementCode = string;
+
 export type DataElementType = DataElement["type"];
+
+export interface ValueByType {
+    TEXT: string;
+    LONG_TEXT: string;
+    USERNAME: string;
+    BOOLEAN: boolean;
+    TRUE_ONLY: boolean;
+    NUMBER: number;
+    INTEGER: number;
+    INTEGER_ZERO_OR_POSITIVE: number;
+    PERCENTAGE: number;
+    DATE: DateObj;
+    OPTION: string;
+}
+
+export type DataElementValue = ValueByType[keyof ValueByType];
 
 export interface DataElementText extends DataElementBase {
     type: "TEXT" | "LONG_TEXT" | "USERNAME";
-    value: Maybe<string>;
 }
 
 export interface DataElementBoolean extends DataElementBase {
     type: "BOOLEAN" | "TRUE_ONLY";
-    value: Maybe<boolean>;
 }
 
 export interface DataElementNumber extends DataElementBase {
     type: "NUMBER" | "INTEGER" | "INTEGER_ZERO_OR_POSITIVE" | "PERCENTAGE";
-    value: Maybe<number>;
 }
 
 export interface DataElementDate extends DataElementBase {
     type: "DATE";
-    value: Maybe<DateObj>;
 }
 
 export interface DataElementOption extends DataElementBase {
     type: "OPTION";
     options: Option[];
-    value: Maybe<string>;
 }
 
 export interface Option {
@@ -60,7 +70,15 @@ export interface Option {
     code: string;
 }
 
-export function getDataElementStringValue(dataElement: DataElement): string {
+// TODO: Move to data layer, string representations are backend-dependent
+
+export type ValueOf<DE extends DataElement> = Maybe<ValueByType[DE["type"]]>;
+export type ValueFromType<T extends DataElementType> = Maybe<ValueByType[T]>;
+
+export function getDataElementStringValue<DE extends DataElement>(
+    dataElement: DE,
+    value: ValueOf<DE>
+): string {
     switch (dataElement.type) {
         case "TEXT":
         case "LONG_TEXT":
@@ -71,12 +89,11 @@ export function getDataElementStringValue(dataElement: DataElement): string {
         case "BOOLEAN":
         case "OPTION":
         case "USERNAME":
-            return dataElement.value?.toString() || "";
+            return value?.toString() || "";
         case "TRUE_ONLY":
-            return dataElement.value === true ? "true" : "";
+            return value === true ? "true" : "";
         case "DATE": {
-            const date = dataElement.value;
-            return date ? dateToString(date) : "";
+            return value ? dateToString(value as DateObj) : "";
         }
     }
 }
@@ -85,7 +102,7 @@ const noErrors = undefined;
 
 export function validateDataElementValue<DE extends DataElement>(
     dataElement: DE,
-    value: DE["value"]
+    value: ValueOf<DE>
 ): Maybe<string> {
     if (value === undefined || value === "") return noErrors;
 
@@ -122,46 +139,37 @@ export function validateDataElementValue<DE extends DataElement>(
     }
 }
 
-export function setDataValue<DE extends DataElement>(dataElement: DE, value: DE["value"]): DE {
-    return { ...dataElement, value };
-}
-
 export function setDataValueComment(dataElement: DataElement, comment: Maybe<string>): DataElement {
     return { ...dataElement, comment };
 }
 
-export function setDataElementValueFromString<DE extends DataElement>(dataElement: DE, strValue: string): DE {
-    const value = getValueFromString<DE>(dataElement.type, strValue);
-    return setDataValue(dataElement, value);
-}
-
 export function getValueFromString<DE extends DataElement>(
-    type: DataElement["type"],
-    strValue: string | undefined
-): DE["value"] {
+    dataElement: DE,
+    strValue: Maybe<string>
+): ValueOf<DE> {
     if (!strValue) return undefined;
 
-    switch (type) {
+    switch (dataElement.type) {
         case "TEXT":
         case "LONG_TEXT":
         case "USERNAME":
-            return strValue;
+            return strValue as ValueOf<DE>;
         case "BOOLEAN":
-            return strValue === "true" ? true : strValue === "false" ? false : undefined;
+            return (strValue === "true" ? true : strValue === "false" ? false : undefined) as ValueOf<DE>;
         case "TRUE_ONLY":
-            return strValue === "true" ? true : undefined;
+            return (strValue === "true" ? true : undefined) as ValueOf<DE>;
         case "OPTION":
-            return strValue;
+            return strValue as ValueOf<DE>;
         case "PERCENTAGE":
         case "NUMBER":
-            return parseFloat(strValue);
+            return parseFloat(strValue) as ValueOf<DE>;
         case "INTEGER":
         case "INTEGER_ZERO_OR_POSITIVE":
-            return parseInt(strValue);
+            return parseInt(strValue) as ValueOf<DE>;
         case "DATE":
-            return fromString(strValue);
+            return fromString(strValue) as ValueOf<DE>;
         default:
-            assertUnreachable(type);
+            assertUnreachable(dataElement);
     }
 }
 

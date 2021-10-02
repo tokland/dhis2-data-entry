@@ -39,8 +39,8 @@ export const DataEntry: React.FC<DataEntryProps> = React.memo(props => {
 
     const dataEntryContext: DataEntryContextState = {
         indicatorsKey: "key",
-        saveDataValue: (dataValue: PostDataValueOptions) => {
-            return compositionRoot.dataValues.postValue.execute(dataValue);
+        saveDataValue: (options: PostDataValueOptions) => {
+            return compositionRoot.dataValues.postValue.execute(options);
         },
         getUsers(_search: string) {
             return Future.success([]);

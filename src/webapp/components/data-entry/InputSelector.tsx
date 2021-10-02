@@ -6,7 +6,7 @@ import { InnerComponentPropsFor } from "./FormComponent";
 import i18n from "../../../locales";
 
 const InputSelector_: React.FC<InnerComponentPropsFor<DataElementOption>> = props => {
-    const { dataElement, onChange, style } = props;
+    const { dataElement, value, onChange, style } = props;
 
     const notifyChange = React.useCallback(
         (event: React.ChangeEvent<{ value: unknown }>) => {
@@ -24,11 +24,11 @@ const InputSelector_: React.FC<InnerComponentPropsFor<DataElementOption>> = prop
     );
 
     const classes = useStyles();
-    const value = dataElement.value || "";
+    const selectValue = value || "";
 
     return (
         <FormControl className={classes.formControl}>
-            <Select style={style} value={value} onChange={notifyChange}>
+            <Select style={style} value={selectValue} onChange={notifyChange}>
                 {items.map(item => (
                     <MenuItem key={item.value} value={item.value}>
                         {item.value ? <span>{item.text}</span> : <i>{item.text}</i>}

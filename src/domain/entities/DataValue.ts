@@ -7,7 +7,7 @@ export interface DataValue {
     dataElementId: Id;
     categoryOptionComboId?: Id;
     // TODO: Review these optionals
-    value?: string;
+    value?: string; // TODO: should this be typed?
     comment?: string;
 }
 
@@ -20,7 +20,10 @@ export function getDataValueId(dv: DataValue): string {
     return _([dv.dataElementId, dv.orgUnitId, dv.period]).compact().join("-");
 }
 
-export function getDataValuesWithCode(dataElements: CodedRef[], dataValues: DataValue[]): DataValueWithCode[] {
+export function getDataValuesWithCode(
+    dataElements: CodedRef[],
+    dataValues: DataValue[]
+): DataValueWithCode[] {
     const dataElementsById = _.keyBy(dataElements, getId);
 
     return dataValues.map(dataValue => ({
