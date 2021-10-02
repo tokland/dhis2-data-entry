@@ -8,10 +8,11 @@ interface DataElementBase {
     id: Id;
     code: string;
     name: string;
-    comment: Maybe<string>;
+    description: string;
+    // TODO: remove
     visible: boolean;
     status: DataElementStatus;
-    description: string;
+    comment: Maybe<string>;
 }
 
 export type DataElementStatus = { type: "enabled" } | { type: "disabled"; reason: string };
@@ -82,7 +83,10 @@ export function getDataElementStringValue(dataElement: DataElement): string {
 
 const noErrors = undefined;
 
-export function validateDataElementValue<DE extends DataElement>(dataElement: DE, value: DE["value"]): Maybe<string> {
+export function validateDataElementValue<DE extends DataElement>(
+    dataElement: DE,
+    value: DE["value"]
+): Maybe<string> {
     if (value === undefined || value === "") return noErrors;
 
     switch (dataElement.type) {
@@ -95,7 +99,9 @@ export function validateDataElementValue<DE extends DataElement>(dataElement: DE
             return noErrors;
         case "PERCENTAGE": {
             const value_ = value as number;
-            return value_ >= 0 && value_ <= 100 ? noErrors : i18n.t("Value should be a percentage between 0 and 100");
+            return value_ >= 0 && value_ <= 100
+                ? noErrors
+                : i18n.t("Value should be a percentage between 0 and 100");
         }
         case "INTEGER_ZERO_OR_POSITIVE": {
             const value_ = value as number;
@@ -109,7 +115,9 @@ export function validateDataElementValue<DE extends DataElement>(dataElement: DE
         }
         case "OPTION": {
             const { options } = dataElement as DataElementOption;
-            return _(options).some(option => option.code === value) ? noErrors : i18n.t(`Invalid option: ${value}`);
+            return _(options).some(option => option.code === value)
+                ? noErrors
+                : i18n.t(`Invalid option: ${value}`);
         }
     }
 }

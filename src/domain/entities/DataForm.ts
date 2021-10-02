@@ -20,9 +20,7 @@ export interface DataForm {
     maxOrgUnitLevel: number;
     childrenOrgUnits: OrgUnit[];
     indicatorValues: Record<IndicatorId, string>;
-    hidden: {
-        indicators: Set<Code>;
-    };
+    hidden: { indicators: Set<Code> };
     periods: string[];
     constants: Record<Code, number>;
 }
