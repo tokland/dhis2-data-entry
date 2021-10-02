@@ -1,5 +1,4 @@
 import React from "react";
-import _ from "lodash";
 import styled from "styled-components";
 
 import i18n from "../../../locales";
@@ -10,13 +9,20 @@ import { OrgUnit } from "../../../domain/entities/OrgUnit";
 import { DataForm as DataFormE } from "../../../domain/entities/DataForm";
 import { AnalyticsInfo, AnalyticsInfoProps } from "./AnalyticsInfo";
 import { Dropdown, DropdownItem } from "@eyeseetea/d2-ui-components";
+import { DataEntryContext, DataEntryContextState } from "./data-entry-context";
+import { Future } from "../../../utils/future";
+import { PostDataValueOptions } from "../../../domain/usecases/PostDataValueUseCase";
+import { useAppContext } from "../../contexts/app-context";
 
 export interface DataEntryProps {
     dataForm: DataFormE;
     getAnalyticsInfo: AnalyticsInfoProps["getAnalyticsInfo"];
 }
 
+const rootIds: string[] = ["qhFcrUfkuL6"];
+
 export const DataEntry: React.FC<DataEntryProps> = React.memo(props => {
+    const { compositionRoot } = useAppContext();
     const { dataForm, getAnalyticsInfo } = props;
 
     const [orgUnit, setOrgUnit] = React.useState<OrgUnit>();
@@ -26,56 +32,70 @@ export const DataEntry: React.FC<DataEntryProps> = React.memo(props => {
     const [_indicatorsKey, setIndicatorsKey] = React.useState("");
 
     //const rootIds = React.useMemo(() => config.currentUser.orgUnitsCapture.map(getId), [config]);
-    const rootIds: string[] = [];
 
-    const [period, setPeriod] = React.useState<string>();
+    const [period, setPeriod] = React.useState<string | undefined>("2021");
 
-    const items: DropdownItem[] = [];
+    const periodItems: DropdownItem[] = [{ value: "2021", text: "2021" }];
+
+    const dataEntryContext: DataEntryContextState = {
+        indicatorsKey: "key",
+        saveDataValue: (dataValue: PostDataValueOptions) => {
+            return compositionRoot.dataValues.postValue.execute(dataValue);
+        },
+        getUsers(_search: string) {
+            return Future.success([]);
+        },
+    };
 
     return (
-        <Container>
-            <LeftPanel>
-                <OrgUnitList
-                    treeViewOptions={treeViewOptions}
-                    onSelectedOrgUnit={setOrgUnit}
-                    selected={orgUnit?.id}
-                    rootIds={rootIds}
-                />
-            </LeftPanel>
+        <DataEntryContext.Provider value={dataEntryContext}>
+            <Container>
+                <LeftPanel>
+                    <OrgUnitList
+                        treeViewOptions={treeViewOptions}
+                        onSelectedOrgUnit={setOrgUnit}
+                        selected={orgUnit?.id}
+                        rootIds={rootIds}
+                    />
+                </LeftPanel>
 
-            <RightPanel>
-                <HeaderBox>
-                    <AnalyticsInfo onAnalyticsRun={setIndicatorsKey} getAnalyticsInfo={getAnalyticsInfo} />
-                </HeaderBox>
+                <RightPanel>
+                    <HeaderBox>
+                        <AnalyticsInfo
+                            onAnalyticsRun={setIndicatorsKey}
+                            getAnalyticsInfo={getAnalyticsInfo}
+                        />
+                    </HeaderBox>
 
-                {orgUnit && dataForm && dataForm.organisationUnits.has(orgUnit.id) ? (
-                    <>
-                        <DataFormWrapper>
-                            <PeriodSelector>
-                                <Dropdown
-                                    hideEmpty={true}
-                                    label={i18n.t("Period")}
-                                    value={period}
-                                    items={items}
-                                    onChange={setPeriod}
+                    {orgUnit && dataForm && dataForm.organisationUnits.has(orgUnit.id) ? (
+                        <>
+                            <DataFormWrapper>
+                                <PeriodSelector>
+                                    <Dropdown
+                                        hideEmpty={true}
+                                        label={i18n.t("Period")}
+                                        value={period}
+                                        items={periodItems}
+                                        onChange={setPeriod}
+                                    />
+                                </PeriodSelector>
+                            </DataFormWrapper>
+
+                            {period && (
+                                <DataForm
+                                    key={[dataForm.id, period, orgUnit.id].join("-")}
+                                    dataForm={dataForm}
+                                    period={period}
+                                    orgUnit={orgUnit}
                                 />
-                            </PeriodSelector>
-                        </DataFormWrapper>
-
-                        {period && (
-                            <DataForm
-                                key={[dataForm.id, period, orgUnit.id].join("-")}
-                                dataForm={dataForm}
-                                period={period}
-                                orgUnit={orgUnit}
-                            />
-                        )}
-                    </>
-                ) : (
-                    i18n.t("Select an organisation unit assigned to the dataset to enter data")
-                )}
-            </RightPanel>
-        </Container>
+                            )}
+                        </>
+                    ) : (
+                        i18n.t("Select an organisation unit assigned to the dataset to enter data")
+                    )}
+                </RightPanel>
+            </Container>
+        </DataEntryContext.Provider>
     );
 });
 

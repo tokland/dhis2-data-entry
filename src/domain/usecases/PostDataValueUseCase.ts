@@ -1,4 +1,3 @@
-import _ from "lodash";
 import { DataValueRepository } from "../repositories/DataValueRepository";
 import { Config } from "../entities/Config";
 import { Id } from "../entities/Base";

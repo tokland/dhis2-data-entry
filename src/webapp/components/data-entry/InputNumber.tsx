@@ -1,5 +1,4 @@
 import React, { ChangeEventHandler } from "react";
-import _ from "lodash";
 import { DataElementNumber } from "../../../domain/entities/DataElement";
 import { InnerComponentPropsFor, Input } from "./FormComponent";
 import { formatNumber } from "../../../utils/basic";

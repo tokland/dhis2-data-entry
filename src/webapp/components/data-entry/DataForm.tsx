@@ -36,8 +36,6 @@ export const DataForm: React.FC<DataFormProps> = React.memo(props => {
     // We need the current dataForm in the getDataForm effect, but not as a dependency, use a ref instead
     const dataFormRef = React.useRef<DataFormE>();
 
-    const isReload = Boolean(dataEntry && indicatorsKey);
-
     React.useEffect(() => {
         if (!period) return;
 
@@ -46,7 +44,6 @@ export const DataForm: React.FC<DataFormProps> = React.memo(props => {
                 dataForm: dataFormRef.current || emptyDataForm,
                 orgUnit,
                 period,
-                skipEditable: isReload,
             })
             .run(
                 dataForm => {
@@ -60,12 +57,16 @@ export const DataForm: React.FC<DataFormProps> = React.memo(props => {
                 },
                 err => snackbar.error(err)
             );
-    }, [compositionRoot, orgUnit, isReload, indicatorsKey, emptyDataForm, period, setDataEntry, snackbar]);
+    }, [compositionRoot, orgUnit, indicatorsKey, emptyDataForm, period, setDataEntry, snackbar]);
 
     return (
         <React.Fragment>
             {dataEntry && (
-                <DataFormTabbed key={getDataEntryKey(dataEntry)} dataEntry={dataEntry} setDataForm={setDataForm} />
+                <DataFormTabbed
+                    key={getDataEntryKey(dataEntry)}
+                    dataEntry={dataEntry}
+                    setDataForm={setDataForm}
+                />
             )}
         </React.Fragment>
     );

@@ -13,6 +13,6 @@ export const DataEntryContext = React.createContext<DataEntryContextState | null
 
 export function useDataEntryContext() {
     const context = React.useContext(DataEntryContext);
-    if (!context) throw new Error("App context uninitialized");
+    if (!context) throw new Error("Data entry context uninitialized");
     return context;
 }

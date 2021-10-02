@@ -12,7 +12,7 @@ import {
     updateInitialDataValues,
 } from "../entities/DataForm";
 import { DataValueWithCode, getDataValueId, getDataValuesWithCode } from "../entities/DataValue";
-import { getOrgUnitIdFromPath, getOrgUnitParentId, OrgUnitPath } from "../entities/OrgUnit";
+import { getOrgUnitIdFromPath, OrgUnitPath } from "../entities/OrgUnit";
 import { applyRulesToDataForm } from "../entities/Rule";
 import { validate as validateForm } from "../entities/rules/FormValidation";
 import { getMessages, Validation } from "../entities/rules/Validation";

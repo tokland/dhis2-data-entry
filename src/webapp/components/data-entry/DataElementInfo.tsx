@@ -27,19 +27,20 @@ export const DataElementInfo: React.FC<DataElementInfoProps> = React.memo(props 
                 <CommentIconStyled fontSize="small" color="primary" />
             </InfoIcon>
 
-            <ConfirmationDialog
-                isOpen={isInfoDialogOpen}
-                disableBackdropClick
-                title={dataElement.name}
-                cancelText={i18n.t("Close")}
-                onCancel={closeInfoDialog}
-                onClose={closeInfoDialog}
-                maxWidth="lg"
-                fullWidth={true}
-            >
-                <DataValueComment dataElement={dataElement} dataEntry={dataEntry} onSave={onChange} />
-                <DataValueAudit dataElement={dataElement} dataEntry={dataEntry} />
-            </ConfirmationDialog>
+            {isInfoDialogOpen && (
+                <ConfirmationDialog
+                    isOpen={true}
+                    title={dataElement.name}
+                    cancelText={i18n.t("Close")}
+                    onCancel={closeInfoDialog}
+                    onClose={closeInfoDialog}
+                    maxWidth="lg"
+                    fullWidth={true}
+                >
+                    <DataValueComment dataElement={dataElement} dataEntry={dataEntry} onSave={onChange} />
+                    <DataValueAudit dataElement={dataElement} dataEntry={dataEntry} />
+                </ConfirmationDialog>
+            )}
         </React.Fragment>
     );
 });

@@ -11,6 +11,7 @@ import { GetOrgUnitsByIdsUseCase } from "./domain/usecases/GetOrgUnitsByIdsUseCa
 import { GetOrgUnitsByLevelUseCase } from "./domain/usecases/GetOrgUnitsByLevelUseCase";
 import { GetOrgUnitsUseCase } from "./domain/usecases/GetOrgUnitsUseCase";
 import { PostDataValueCommentUseCase } from "./domain/usecases/PostDataValueCommentUseCase";
+import { PostDataValueUseCase } from "./domain/usecases/PostDataValueUseCase";
 
 export function getCompositionRoot(api: D2Api) {
     const dataValueRepository = new Dhis2DataValueRepository(api);
@@ -30,6 +31,12 @@ export function getCompositionRoot(api: D2Api) {
         dataValues: {
             getAudit: new GetDataValueAuditsUseCase(dataValueAuditRepository),
             postComment: new PostDataValueCommentUseCase(dataValueRepository),
+            postValue: new PostDataValueUseCase(
+                config,
+                dataValueRepository,
+                aggregatedDataValueRepository,
+                orgUnitRepository
+            ),
         },
 
         orgUnits: {

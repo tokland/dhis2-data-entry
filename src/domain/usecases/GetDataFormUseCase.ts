@@ -2,7 +2,6 @@ import _ from "lodash";
 import { DataValueRepository } from "../repositories/DataValueRepository";
 import { FutureData } from "../../data/future";
 import { Config } from "../entities/Config";
-import { getId } from "../entities/Base";
 import { DataForm, updateDataValues, updateInitialDataValues } from "../entities/DataForm";
 import { OrgUnit } from "../entities/OrgUnit";
 import { DataValue } from "../entities/DataValue";
@@ -15,7 +14,6 @@ interface Options {
     dataForm: DataForm;
     orgUnit: OrgUnit;
     period: string;
-    skipEditable?: boolean;
 }
 
 export class GetDataFormUseCase {
@@ -28,7 +26,7 @@ export class GetDataFormUseCase {
 
     execute(options: Options): FutureData<DataForm> {
         const { config, dataValueRepository, aggregatedDataValueRepository } = this;
-        const { dataForm, orgUnit, period, skipEditable } = options;
+        const { dataForm, orgUnit, period } = options;
         const orgUnitId = orgUnit.id;
 
         const dataValues$ = dataValueRepository.get({
@@ -52,15 +50,7 @@ export class GetDataFormUseCase {
                 childrenOrgUnits,
             };
 
-            const disabledDataElements = new Set(
-                _.values(dataForm2.dataElements)
-                    .filter(de => de.status.type === "disabled")
-                    .map(getId)
-            );
-            const dataValuesToUpdate = skipEditable
-                ? dataValues.filter(dv => disabledDataElements.has(dv.dataElementId))
-                : dataValues;
-            const dataForm3 = updateDataValues(dataForm2, dataValuesToUpdate);
+            const dataForm3 = updateDataValues(dataForm2, dataValues);
 
             return updateDataFormIndicators({
                 config,

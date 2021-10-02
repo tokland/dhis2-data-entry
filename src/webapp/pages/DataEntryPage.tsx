@@ -1,19 +1,40 @@
 import React from "react";
 import { FutureData } from "../../data/future";
 import { AggregatedDataValueInfo } from "../../domain/entities/AggregatedDataValueInfo";
-import { DataForm } from "../../domain/entities/DataForm";
+import { DataElement } from "../../domain/entities/DataElement";
+import { DataForm, DataFormSection } from "../../domain/entities/DataForm";
 import { Future } from "../../utils/future";
 import { DataEntry } from "../components/data-entry/DataEntry";
 
 export interface DataEntryPageProps {}
 
 export const DataEntryPage: React.FC<DataEntryPageProps> = React.memo(() => {
+    const dataElement: DataElement = {
+        id: "WmKwIxATeAB",
+        name: "Country Grant - # Training Events",
+        code: "DE1",
+        comment: "Some comment",
+        visible: true,
+        status: { type: "enabled" },
+        description: "description",
+        type: "NUMBER",
+        value: undefined,
+    };
+
+    const section1: DataFormSection = {
+        id: "section1",
+        name: "Section 1",
+        dataElementIds: ["de1"],
+        indicatorIds: [],
+        visible: true,
+    };
+
     const dataForm: DataForm = {
-        id: "12345",
+        id: "NQOwInnRDNL",
         name: "Example form",
-        sections: [],
-        organisationUnits: new Set(),
-        dataElements: {},
+        sections: [section1],
+        organisationUnits: new Set(["qhFcrUfkuL6"]),
+        dataElements: { de1: dataElement },
         indicators: {},
         logic: {
             entities: { dataElements: {} },

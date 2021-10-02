@@ -1,10 +1,6 @@
-import _ from "lodash";
-import { Maybe, recordOf } from "../../utils/ts-utils";
-import { Ref, NamedRef, Id, CodedRef, Code } from "./Base";
+import { Id } from "./Base";
 import { Constant } from "./Constant";
 import { DataElement } from "./DataElement";
-import { DataForm } from "./DataForm";
-import { OrgUnit } from "./OrgUnit";
 
 export interface Config {
     constants: Record<Id, Constant>;
