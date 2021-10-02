@@ -9,10 +9,9 @@ interface DataElementBase {
     code: string;
     name: string;
     description: string;
-    // TODO: remove
+    // TODO: Move to another entity
     visible: boolean;
     status: DataElementStatus;
-    comment: Maybe<string>;
 }
 
 export type DataElement =
@@ -137,10 +136,6 @@ export function validateDataElementValue<DE extends DataElement>(
                 : i18n.t(`Invalid option: ${value}`);
         }
     }
-}
-
-export function setDataValueComment(dataElement: DataElement, comment: Maybe<string>): DataElement {
-    return { ...dataElement, comment };
 }
 
 export function getValueFromString<DE extends DataElement>(

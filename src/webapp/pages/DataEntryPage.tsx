@@ -13,7 +13,6 @@ export const DataEntryPage: React.FC<DataEntryPageProps> = React.memo(() => {
         id: "WmKwIxATeAB",
         name: "Country Grant - # Training Events",
         code: "TRAINING_EVENTS",
-        comment: "Some comment",
         visible: true,
         status: { type: "enabled" },
         description: "description",
@@ -24,7 +23,6 @@ export const DataEntryPage: React.FC<DataEntryPageProps> = React.memo(() => {
         id: "RivqZao3W5N",
         name: "Country Grant - Inherit Template",
         code: "INHERIT_TEMPLATE",
-        comment: "Some comment",
         visible: true,
         status: { type: "enabled" },
         description: "description",
@@ -46,6 +44,7 @@ export const DataEntryPage: React.FC<DataEntryPageProps> = React.memo(() => {
         organisationUnits: new Set(["qhFcrUfkuL6"]),
         dataElements: { [dataElement.id]: dataElement, [dataElement2.id]: dataElement2 },
         values: {},
+        comments: {},
         indicators: {},
         logic: {
             entities: { dataElements: {} },

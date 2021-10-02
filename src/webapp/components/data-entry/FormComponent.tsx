@@ -8,7 +8,7 @@ import { DataElementInfo } from "./DataElementInfo";
 import { DataEntry } from "../../../domain/entities/DataEntry";
 import { useCallbackEffect } from "../../hooks/use-callback-effect";
 import { useDataEntryContext } from "./data-entry-context";
-import { DataForm, getValue, setDataFormDataElement, setDataValue } from "../../../domain/entities/DataForm";
+import { DataForm, getValue, setDataValue } from "../../../domain/entities/DataForm";
 import { getMessages } from "../../../domain/entities/rules/Validation";
 
 export interface InnerComponentPropsFor<DE extends DataElement> {
@@ -96,10 +96,10 @@ export function FormComponent<DE extends DataElement>(props: FormComponentPropsF
     const save$ = useCallbackEffect(save);
 
     const notifyCommentSave = React.useCallback(
-        (dataElement: DataElement) => {
-            onChange(setDataFormDataElement(dataForm, dataElement));
+        (dataEntry: DataEntry) => {
+            onChange(dataEntry.dataForm);
         },
-        [dataForm, onChange]
+        [onChange]
     );
 
     return (

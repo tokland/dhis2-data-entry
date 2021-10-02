@@ -6,8 +6,14 @@ import { DataElement } from "../entities/DataElement";
 export class PostDataValueCommentUseCase {
     constructor(private dataValueRepository: DataValueRepository) {}
 
-    execute(options: { orgUnitId: Id; period: string; dataFormId: Id; dataElement: DataElement }): FutureData<void> {
-        const { dataElement, dataFormId } = options;
+    execute(options: {
+        orgUnitId: Id;
+        period: string;
+        dataFormId: Id;
+        dataElement: DataElement;
+        comment: string;
+    }): FutureData<void> {
+        const { dataElement, dataFormId, comment } = options;
 
         return this.dataValueRepository.postValue({
             dataValue: {
@@ -15,8 +21,7 @@ export class PostDataValueCommentUseCase {
                 orgUnitId: options.orgUnitId,
                 period: options.period,
                 dataElementId: dataElement.id,
-                //categoryOptionComboId: config.categoryOptionCombos.default.id,
-                comment: dataElement.comment,
+                comment,
             },
         });
     }

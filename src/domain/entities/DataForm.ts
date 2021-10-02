@@ -21,6 +21,7 @@ export interface DataForm {
     maxOrgUnitLevel: number;
     childrenOrgUnits: OrgUnit[];
     values: Record<DataElementId, Maybe<DataElementValue>>;
+    comments: Record<DataElementId, Maybe<string>>;
     indicatorValues: Record<IndicatorId, string>;
     hidden: { indicators: Set<Code> };
     periods: string[];
@@ -31,12 +32,24 @@ export function getValue<DE extends DataElement>(dataForm: DataForm, dataElement
     return dataForm.values[dataElement.id] as ValueOf<DE>;
 }
 
+export function getComment(dataForm: DataForm, dataElement: DataElement): Maybe<string> {
+    return dataForm.comments[dataElement.id];
+}
+
 export function setDataValue<DE extends DataElement>(
     dataForm: DataForm,
     dataElement: DE,
     value: ValueOf<DE>
 ): DataForm {
     return { ...dataForm, values: { ...dataForm.values, [dataElement.id]: value } };
+}
+
+export function setDataValueComment(
+    dataForm: DataForm,
+    dataElement: DataElement,
+    comment: Maybe<string>
+): DataForm {
+    return { ...dataForm, comments: { ...dataForm.comments, [dataElement.id]: comment } };
 }
 
 export function setDataElementValueFromString<DE extends DataElement>(
@@ -76,10 +89,10 @@ export function updateDataValuesWithoutProcessing(dataForm: DataForm, dataValues
         .values()
         .reduce((dataFormAcc, dataElement) => {
             const dataValue = valueByDataElementId[dataElement.id];
-            const baseDataElement = dataValue ? { ...dataElement, comment: dataValue.comment } : dataElement;
 
             if (dataValue?.value !== undefined) {
-                return setDataElementValueFromString(dataFormAcc, baseDataElement, dataValue?.value);
+                const dataForm2 = setDataElementValueFromString(dataFormAcc, dataElement, dataValue?.value);
+                return setDataValueComment(dataForm2, dataElement, dataValue?.comment);
             } else {
                 return dataFormAcc;
             }

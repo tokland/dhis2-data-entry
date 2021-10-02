@@ -13,7 +13,7 @@ import i18n from "../../../locales";
 export interface DataElementInfoProps {
     dataElement: DataElement;
     dataEntry: DataEntry;
-    onChange(dataElement: DataElement): void;
+    onChange(dataEntry: DataEntry): void;
 }
 
 export const DataElementInfo: React.FC<DataElementInfoProps> = React.memo(props => {
