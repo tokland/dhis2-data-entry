@@ -7,7 +7,6 @@ import { Id } from "../Base";
 import { Config } from "../Config";
 import { DataElement, DataElementCode, validateDataElementValue } from "../DataElement";
 import { DataForm } from "../DataForm";
-import { DataValueWithCode } from "../DataValue";
 import { getDataElementsFromDataForm } from "../Rule";
 import { buildValidationError, Validation } from "./Validation";
 
@@ -22,7 +21,6 @@ export type Validation$ = FutureData<Validation>;
 interface ValidateOptions<DEKey extends string = string> {
     dataElement: DataElement;
     dataElements: Record<DEKey, DataElement>;
-    initialDataValues: DataValueWithCode[];
 }
 
 export function validate(options: {
@@ -33,7 +31,6 @@ export function validate(options: {
     dataElement: DataElement;
 }): Validation$ {
     const { config, dataForm, dataElement } = options;
-    const { initialDataValues } = dataForm;
     const { validations } = dataForm.logic;
 
     const baseError = validateDataElementValue(dataElement, dataElement.value);
@@ -47,7 +44,7 @@ export function validate(options: {
 
     const dataElements = getDataElementsFromDataForm(dataForm);
 
-    const validateOptions: ValidateOptions = { dataElement, dataElements, initialDataValues };
+    const validateOptions: ValidateOptions = { dataElement, dataElements };
     const results$ = validationsForDataElement.map(validation => validation.validate(validateOptions));
 
     return Future.parallel(results$).map(_.flatten);

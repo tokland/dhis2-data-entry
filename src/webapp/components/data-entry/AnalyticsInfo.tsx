@@ -34,12 +34,18 @@ export const AnalyticsInfo: React.FC<AnalyticsInfoProps> = React.memo(props => {
     }, [getAnalyticsInfoCb, getAnalyticsInfo, setMessages]);
 
     return (
-        <div>
+        <Wrapper>
             <b>{i18n.t("Analytics")}</b>
-            {messages ? messages.map((msg, idx) => <AnalyticsInfoLine key={idx}>{msg}</AnalyticsInfoLine>) : "..."}
-        </div>
+            {messages
+                ? messages.map((msg, idx) => <AnalyticsInfoLine key={idx}>{msg}</AnalyticsInfoLine>)
+                : "..."}
+        </Wrapper>
     );
 });
+
+const Wrapper = styled.div`
+    margin-left: auto;
+`;
 
 const AnalyticsInfoLine = styled.div``;
 

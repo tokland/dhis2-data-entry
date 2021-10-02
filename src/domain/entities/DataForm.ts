@@ -1,7 +1,7 @@
 import _ from "lodash";
-import { Code, CodedRef, Id } from "./Base";
+import { Code, Id } from "./Base";
 import { DataElement, setDataElementValueFromString } from "./DataElement";
-import { DataValue, DataValueWithCode, getDataValuesWithCode } from "./DataValue";
+import { DataValue } from "./DataValue";
 import { Indicator, IndicatorId } from "./Indicator";
 import { applyRulesToDataForm } from "./Rule";
 import { DataFormLogic } from "./DataFormLogic";
@@ -20,7 +20,6 @@ export interface DataForm {
     maxOrgUnitLevel: number;
     childrenOrgUnits: OrgUnit[];
     indicatorValues: Record<IndicatorId, string>;
-    initialDataValues: DataValueWithCode[]; // Used in logic
     hidden: {
         indicators: Set<Code>;
     };
@@ -47,14 +46,6 @@ export function setDataFormDataElement(dataForm: DataForm, dataElement: DataElem
         ...dataForm,
         dataElements: { ...dataForm.dataElements, [dataElement.id]: dataElement },
     };
-}
-
-export function updateInitialDataValues(
-    dataForm: DataForm,
-    dataElements: CodedRef[],
-    dataValues: DataValue[]
-): DataForm {
-    return { ...dataForm, initialDataValues: getDataValuesWithCode(dataElements, dataValues) };
 }
 
 export function updateDataValuesWithoutProcessing(dataForm: DataForm, dataValues: DataValue[]): DataForm {

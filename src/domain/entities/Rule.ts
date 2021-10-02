@@ -3,7 +3,6 @@ import { Maybe } from "../../utils/ts-utils";
 import { DataElement, DataElementId } from "./DataElement";
 import { DataForm } from "./DataForm";
 import { DataFormLogic } from "./DataFormLogic";
-import { DataValueWithCode } from "./DataValue";
 import { applyActions, RuleAction } from "./RuleAction";
 
 export type Namespace<DEKey extends string> = Record<DEKey, DataElementId>;
@@ -17,7 +16,6 @@ export const emptyRuleCollection: DataFormLogic = {
 export interface RuleData<DEKey extends string = string> {
     dataForm: DataForm;
     dataElements: Record<DEKey, DataElement>;
-    initialDataValues: DataValueWithCode[];
 }
 
 export interface Rule<DEKey extends string> {
@@ -59,15 +57,8 @@ export function getDataElementsFromDataForm(dataForm: DataForm): Record<string, 
 export function applyRulesToDataForm(dataForm: DataForm): DataForm {
     return dataForm.logic.rules.reduce((currentDataForm, rule) => {
         const dataElements = getDataElementsFromDataForm(currentDataForm);
-
-        const ruleData: RuleData = {
-            dataForm,
-            dataElements,
-            initialDataValues: dataForm.initialDataValues,
-        };
-
+        const ruleData: RuleData = { dataForm, dataElements };
         const actions = rule.actions(ruleData);
-
         return applyActions(currentDataForm, _.compact(actions));
     }, dataForm);
 }
