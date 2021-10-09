@@ -5,7 +5,6 @@ import { MuiThemeProvider } from "@material-ui/core/styles";
 import OldMuiThemeProvider from "material-ui/styles/MuiThemeProvider";
 import React, { useEffect, useState } from "react";
 import { getCompositionRoot } from "../../../CompositionRoot";
-import { Instance } from "../../../data/entities/Instance";
 import { D2Api } from "../../../types/d2-api";
 import { AppContext, AppContextState } from "../../contexts/app-context";
 import { Router } from "../Router";
@@ -13,19 +12,18 @@ import "./App.css";
 import muiThemeLegacy from "./themes/dhis2-legacy.theme";
 import { muiTheme } from "./themes/dhis2.theme";
 
-const App: React.FC<AppProps> = ({ api, d2 }) => {
+const App: React.FC<AppProps> = ({ api }) => {
     const [loading, setLoading] = useState(true);
     const [appContext, setAppContext] = useState<AppContextState | null>(null);
 
     useEffect(() => {
         async function setup() {
             const compositionRoot = getCompositionRoot(api);
-
-            setAppContext({ api, compositionRoot });
+            setAppContext({ api, compositionRoot, config: compositionRoot.config });
             setLoading(false);
         }
         setup();
-    }, [d2, api]);
+    }, [api]);
 
     if (loading) return null;
 
@@ -46,16 +44,6 @@ const App: React.FC<AppProps> = ({ api, d2 }) => {
     );
 };
 
-export type AppProps = { api: D2Api; d2: D2; instance: Instance };
-
-type D2 = object;
-
-declare global {
-    interface Window {
-        $: {
-            feedbackDhis2(d2: D2, appKey: string, feedbackOptions: object): void;
-        };
-    }
-}
+export type AppProps = { api: D2Api };
 
 export default React.memo(App);

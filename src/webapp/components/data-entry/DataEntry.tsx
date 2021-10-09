@@ -14,16 +14,15 @@ import { Future } from "../../../utils/future";
 import { PostDataValueOptions } from "../../../domain/usecases/PostDataValueUseCase";
 import { useAppContext } from "../../contexts/app-context";
 import { DataSet } from "../../../domain/entities/DataSet";
+import { getId } from "../../../domain/entities/Base";
 
 export interface DataEntryProps {
     dataSet: DataSet;
     getAnalyticsInfo: AnalyticsInfoProps["getAnalyticsInfo"];
 }
 
-const rootIds: string[] = ["qhFcrUfkuL6"];
-
 export const DataEntry: React.FC<DataEntryProps> = React.memo(props => {
-    const { compositionRoot } = useAppContext();
+    const { config, compositionRoot } = useAppContext();
     const { dataSet, getAnalyticsInfo } = props;
 
     const [orgUnit, setOrgUnit] = React.useState<OrgUnit>();
@@ -32,12 +31,10 @@ export const DataEntry: React.FC<DataEntryProps> = React.memo(props => {
 
     const [_indicatorsKey, setIndicatorsKey] = React.useState("");
 
-    // TODO
-    //const rootIds = React.useMemo(() => config.currentUser.orgUnitsCapture.map(getId), [config]);
+    const rootIds = React.useMemo(() => config.currentUser.orgUnitsCapture.map(getId), [config]);
 
     const [period, setPeriod] = React.useState<string | undefined>("2021");
 
-    // TODO
     const periodItems: DropdownItem[] = React.useMemo(
         () => dataSet.periods.map(period => ({ value: period, text: period })),
         [dataSet]

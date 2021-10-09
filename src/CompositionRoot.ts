@@ -16,11 +16,16 @@ import { PostDataValueUseCase } from "./domain/usecases/PostDataValueUseCase";
 export function getCompositionRoot(api: D2Api) {
     const dataValueRepository = new Dhis2DataValueRepository(api);
     const orgUnitRepository = new OrgUnitDHIS2Repository(api);
-    const config: Config = { constants: {}, dataElements: [] };
+    const config: Config = {
+        currentUser: { orgUnitsCapture: [{ id: "qhFcrUfkuL6" }] },
+        constants: {},
+        dataElements: [],
+    };
     const dataValueAuditRepository = new DataValueAuditDHIS2Repository(api);
     const aggregatedDataValueRepository = new AggregatedDataValueDHIS2Repository(api, { serverDiffMs: 0 });
 
     return {
+        config,
         getDataForm: new GetDataFormUseCase(
             config,
             dataValueRepository,

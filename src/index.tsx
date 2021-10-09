@@ -1,7 +1,6 @@
 import { Provider } from "@dhis2/app-runtime";
 import i18n from "@dhis2/d2-i18n";
 import axios from "axios";
-import { init } from "d2";
 import _ from "lodash";
 import ReactDOM from "react-dom";
 import { Instance } from "./data/entities/Instance";
@@ -32,17 +31,16 @@ async function main() {
     const baseUrl = await getBaseUrl();
 
     try {
-        const d2 = await init({ baseUrl: baseUrl + "/api", schemas: [] });
         const instance = new Instance({ url: baseUrl });
         const api = getD2APiFromInstance(instance);
-        Object.assign(window, { d2, api });
+        Object.assign(window, { api });
 
         const userSettings = await api.get<{ keyUiLocale: string }>("/userSettings").getData();
         configI18n(userSettings);
 
         ReactDOM.render(
             <Provider config={{ baseUrl, apiVersion: 30 }}>
-                <App api={api} d2={d2} instance={instance} />
+                <App api={api} />
             </Provider>,
             document.getElementById("root")
         );
