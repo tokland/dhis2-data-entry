@@ -32,6 +32,7 @@ export const DataEntryPage: React.FC<DataEntryPageProps> = React.memo(() => {
         indicatorIds: [],
     };
 
+    // TODO: compositionRoot.dataSets.get({id: "NQOwInnRDNL"})
     const dataSet: DataSet = {
         id: "NQOwInnRDNL",
         name: "Example form",
@@ -40,10 +41,11 @@ export const DataEntryPage: React.FC<DataEntryPageProps> = React.memo(() => {
         dataElements: { [dataElement.id]: dataElement, [dataElement2.id]: dataElement2 },
         indicators: {},
         periods: ["2021", "2022"],
+        // TODO: Create a full logic example
         logic: {
-            entities: { dataElements: {} },
+            entities: { dataElements: {} }, // TODO: dataElements.someDataElementCode SOME_DATAELEMENT_CODE
             rules: [],
-            validations: [],
+            validations: [], // TODO: Unify rules/validations?
         },
         maxOrgUnitLevel: 10,
     };

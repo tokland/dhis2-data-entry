@@ -46,6 +46,7 @@ export const DataEntry: React.FC<DataEntryProps> = React.memo(props => {
             return compositionRoot.dataValues.postValue.execute(options);
         },
         getUsers(_search: string) {
+            // TODO
             return Future.success([]);
         },
     };
@@ -60,6 +61,8 @@ export const DataEntry: React.FC<DataEntryProps> = React.memo(props => {
             .execute({ dataSet, orgUnit, period })
             .run(setDataForm, err => snackbar.error(err));
     }, [compositionRoot, dataSet, orgUnit, period, snackbar]);
+
+    // TODO: Allow to define the view structure with prop-less components (use DataEntryContext)
 
     return (
         <DataEntryContext.Provider value={dataEntryContext}>
@@ -83,19 +86,17 @@ export const DataEntry: React.FC<DataEntryProps> = React.memo(props => {
 
                     {dataForm && dataForm.dataSet.organisationUnits.has(dataForm.orgUnit.id) ? (
                         <>
-                            <DataFormWrapper>
-                                <PeriodSelector>
-                                    <Dropdown
-                                        hideEmpty={true}
-                                        label={i18n.t("Period")}
-                                        value={period}
-                                        items={periodItems}
-                                        onChange={setPeriod}
-                                    />
-                                </PeriodSelector>
-                            </DataFormWrapper>
+                            <PeriodSelectorWrapper>
+                                <Dropdown
+                                    hideEmpty={true}
+                                    label={i18n.t("Period")}
+                                    value={period}
+                                    items={periodItems}
+                                    onChange={setPeriod}
+                                />
+                            </PeriodSelectorWrapper>
 
-                            {period && <DataForm dataForm={dataForm} setDataForm={setDataForm} />}
+                            <DataForm dataForm={dataForm} setDataForm={setDataForm} />
                         </>
                     ) : (
                         i18n.t("Select an organisation unit assigned to the dataset to enter data")
@@ -105,11 +106,6 @@ export const DataEntry: React.FC<DataEntryProps> = React.memo(props => {
         </DataEntryContext.Provider>
     );
 });
-
-const DataFormWrapper = styled.div`
-    display: flex;
-    padding: 10px 0px;
-`;
 
 const HeaderBox = styled.div`
     display: flex;
@@ -138,7 +134,7 @@ const RightPanel = styled.div`
     max-width: 70%;
 `;
 
-const PeriodSelector = styled.div`
+const PeriodSelectorWrapper = styled.div`
     margin-bottom: 10px;
     margin-right: 20px;
 `;
