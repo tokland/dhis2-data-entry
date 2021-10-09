@@ -11,7 +11,7 @@ import { DataSet, DataSetSection, DataSetSectionId } from "./DataSet";
 export interface DataForm {
     dataSet: DataSet;
     period: string;
-    orgUnit: DataEntryOrgUnit;
+    orgUnit: DataFormOrgUnit;
     values: Record<DataElementId, Maybe<DataElementValue>>;
     comments: Record<DataElementId, Maybe<string>>;
     dataElementsStatus: Record<DataElementId, DataElementStatus>;
@@ -21,7 +21,7 @@ export interface DataForm {
     constants: Record<Code, number>;
 }
 
-interface DataEntryOrgUnit {
+interface DataFormOrgUnit {
     id: Id;
     path: Id[];
 }
