@@ -5,13 +5,11 @@ import { Id } from "../entities/Base";
 import { Config } from "../entities/Config";
 import { DataForm } from "../entities/DataForm";
 import { Indicator, evalIndicatorExpression, formatIndicatorValue } from "../entities/Indicator";
-import { getOrgUnitIdFromPath, OrgUnitPath } from "../entities/OrgUnit";
+import { getOrgUnitIdFromPath } from "../entities/OrgUnit";
 import { AggregatedDataValueRepository } from "../repositories/AggregatedDataValueRepository";
 
 export function updateDataFormIndicators(options: {
     dataForm: DataForm;
-    period: string;
-    orgUnitPath: OrgUnitPath;
     config: Config;
     aggregatedDataValueRepository: AggregatedDataValueRepository;
 }): FutureData<DataForm> {
@@ -32,12 +30,12 @@ export function updateDataFormIndicators(options: {
 function getIndicatorValue(options: {
     indicator: Indicator;
     dataForm: DataForm;
-    period: string;
-    orgUnitPath: OrgUnitPath;
     config: Config;
     aggregatedDataValueRepository: AggregatedDataValueRepository;
 }): FutureData<string> {
-    const { indicator, dataForm, period, orgUnitPath, config, aggregatedDataValueRepository } = options;
+    const { indicator, dataForm, config, aggregatedDataValueRepository } = options;
+    const { period, orgUnit } = dataForm;
+    const orgUnitPath = orgUnit.path;
 
     switch (indicator.type) {
         case "standard": {

@@ -2,8 +2,7 @@ import { useSnackbar } from "@eyeseetea/d2-ui-components";
 import { TextField } from "@material-ui/core";
 import React from "react";
 import { DataElement } from "../../../domain/entities/DataElement";
-import { DataEntry } from "../../../domain/entities/DataEntry";
-import { getComment, setDataValueComment } from "../../../domain/entities/DataForm";
+import { DataForm, getComment, setDataValueComment } from "../../../domain/entities/DataForm";
 import i18n from "../../../locales";
 import { useAppContext } from "../../contexts/app-context";
 import { useCallbackEffect } from "../../hooks/use-callback-effect";
@@ -11,12 +10,12 @@ import { feedbackStyles, SavingState } from "./FormComponent";
 
 export interface DataValueCommentProps {
     dataElement: DataElement;
-    dataEntry: DataEntry;
-    onSave(dataEntry: DataEntry): void;
+    dataForm: DataForm;
+    onSave(dataForm: DataForm): void;
 }
 
 export const DataValueComment: React.FC<DataValueCommentProps> = React.memo(props => {
-    const { dataElement, dataEntry, onSave } = props;
+    const { dataElement, dataForm, onSave } = props;
     const { compositionRoot } = useAppContext();
     const [state, setState] = React.useState<SavingState>("original");
     const snackbar = useSnackbar();
@@ -24,7 +23,7 @@ export const DataValueComment: React.FC<DataValueCommentProps> = React.memo(prop
     const saveComment = React.useCallback(
         (ev: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => {
             const comment = ev.target.value;
-            const { orgUnit, dataForm, period } = dataEntry;
+            const { orgUnit, period } = dataForm;
             const dataSetId = dataForm.dataSet.id;
 
             setState("saving");
@@ -40,10 +39,7 @@ export const DataValueComment: React.FC<DataValueCommentProps> = React.memo(prop
                 .run(
                     () => {
                         setState("saveSuccessful");
-                        onSave({
-                            ...dataEntry,
-                            dataForm: setDataValueComment(dataForm, dataElement, comment),
-                        });
+                        onSave(setDataValueComment(dataForm, dataElement, comment));
                     },
                     errorMessage => {
                         snackbar.error(errorMessage);
@@ -51,7 +47,7 @@ export const DataValueComment: React.FC<DataValueCommentProps> = React.memo(prop
                     }
                 );
         },
-        [compositionRoot, onSave, dataElement, dataEntry, snackbar]
+        [compositionRoot, onSave, dataElement, dataForm, snackbar]
     );
 
     const saveCommentEffect = useCallbackEffect(saveComment);
@@ -65,7 +61,7 @@ export const DataValueComment: React.FC<DataValueCommentProps> = React.memo(prop
             multiline={true}
             rows={4}
             rowsMax={4}
-            defaultValue={getComment(dataEntry.dataForm, dataElement)}
+            defaultValue={getComment(dataForm, dataElement)}
             onBlur={saveCommentEffect}
         />
     );

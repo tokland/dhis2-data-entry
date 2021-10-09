@@ -7,17 +7,17 @@ import { DataElement } from "../../../domain/entities/DataElement";
 import { useBooleanState } from "../../hooks/use-boolean";
 import { DataValueComment } from "./DataValueComment";
 import { DataValueAudit } from "./DataValueAudit";
-import { DataEntry } from "../../../domain/entities/DataEntry";
 import i18n from "../../../locales";
+import { DataForm } from "../../../domain/entities/DataForm";
 
 export interface DataElementInfoProps {
     dataElement: DataElement;
-    dataEntry: DataEntry;
-    onChange(dataEntry: DataEntry): void;
+    dataForm: DataForm;
+    setDataForm(dataForm: DataForm): void;
 }
 
 export const DataElementInfo: React.FC<DataElementInfoProps> = React.memo(props => {
-    const { dataElement, dataEntry, onChange } = props;
+    const { dataElement, dataForm, setDataForm } = props;
 
     const [isInfoDialogOpen, { enable: openInfoDialog, disable: closeInfoDialog }] = useBooleanState(false);
 
@@ -37,8 +37,8 @@ export const DataElementInfo: React.FC<DataElementInfoProps> = React.memo(props 
                     maxWidth="lg"
                     fullWidth={true}
                 >
-                    <DataValueComment dataElement={dataElement} dataEntry={dataEntry} onSave={onChange} />
-                    <DataValueAudit dataElement={dataElement} dataEntry={dataEntry} />
+                    <DataValueComment dataElement={dataElement} dataForm={dataForm} onSave={setDataForm} />
+                    <DataValueAudit dataElement={dataElement} dataForm={dataForm} />
                 </ConfirmationDialog>
             )}
         </React.Fragment>

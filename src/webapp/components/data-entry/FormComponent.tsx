@@ -5,7 +5,6 @@ import styled, { css } from "styled-components";
 import { DataElement, ValueOf } from "../../../domain/entities/DataElement";
 import { useRefresher } from "../../hooks/use-refresher";
 import { DataElementInfo } from "./DataElementInfo";
-import { DataEntry } from "../../../domain/entities/DataEntry";
 import { useCallbackEffect } from "../../hooks/use-callback-effect";
 import { useDataEntryContext } from "./data-entry-context";
 import {
@@ -30,17 +29,17 @@ export type SavingState = "original" | "saving" | "saveSuccessful" | "saveError"
 
 interface FormComponentPropsFor<DE extends DataElement> {
     component: React.FC<InnerComponentPropsFor<DE>>;
-    dataEntry: DataEntry;
+    dataForm: DataForm;
     dataElement: DE;
-    onChange(dataForm: DataForm): void;
+    setDataForm(dataForm: DataForm): void;
 }
 
 export function FormComponent<DE extends DataElement>(props: FormComponentPropsFor<DE>) {
-    const { dataEntry, component: Component, dataElement, onChange } = props;
+    const { dataForm, component: Component, dataElement, setDataForm } = props;
     const { saveDataValue } = useDataEntryContext();
     const snackbar = useSnackbar();
     const [refreshKey, refresh] = useRefresher();
-    const { dataForm, orgUnit, period } = dataEntry;
+    const { orgUnit, period } = dataForm;
     const [savingState, setSavingState] = React.useState<SavingState>("original");
     const orgUnitPath = orgUnit.path;
 
@@ -69,7 +68,7 @@ export function FormComponent<DE extends DataElement>(props: FormComponentPropsF
                     }
 
                     setSavingState("saveSuccessful");
-                    onChange(dataFormUpdated);
+                    setDataForm(dataFormUpdated);
                 },
                 postDataValueError => {
                     snackbar.error(postDataValueError.message, { autoHideDuration: 5000 });
@@ -96,20 +95,13 @@ export function FormComponent<DE extends DataElement>(props: FormComponentPropsF
             dataForm,
             period,
             setSavingState,
-            onChange,
+            setDataForm,
             saveDataValue,
             savingState,
         ]
     );
 
     const save$ = useCallbackEffect(save);
-
-    const notifyCommentSave = React.useCallback(
-        (dataEntry: DataEntry) => {
-            onChange(dataEntry.dataForm);
-        },
-        [onChange]
-    );
 
     const { enabled, visible } = getDataElementStatus(dataForm, dataElement);
 
@@ -125,7 +117,7 @@ export function FormComponent<DE extends DataElement>(props: FormComponentPropsF
                 onChange={save$}
             />
 
-            <DataElementInfo dataElement={dataElement} dataEntry={dataEntry} onChange={notifyCommentSave} />
+            <DataElementInfo dataElement={dataElement} dataForm={dataForm} setDataForm={setDataForm} />
         </>
     );
 }

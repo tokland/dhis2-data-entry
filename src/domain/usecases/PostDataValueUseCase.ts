@@ -54,8 +54,6 @@ export class PostDataValueUseCase {
                                 return updateDataFormIndicators({
                                     config,
                                     aggregatedDataValueRepository,
-                                    period,
-                                    orgUnitPath,
                                     dataForm: dataFormUpdate,
                                 }).mapError(getServerError);
                             });

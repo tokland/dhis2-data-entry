@@ -10,12 +10,19 @@ import { DataSet, DataSetSection } from "./DataSet";
 
 export interface DataForm {
     dataSet: DataSet;
+    period: string;
+    orgUnit: DataEntryOrgUnit;
     values: Record<DataElementId, Maybe<DataElementValue>>;
     comments: Record<DataElementId, Maybe<string>>;
     indicatorValues: Record<IndicatorId, string>;
     indicatorsStatus: Record<IndicatorId, IndicatorStatus>;
     constants: Record<Code, number>;
     dataElementsStatus: Record<DataElementId, DataElementStatus>;
+}
+
+interface DataEntryOrgUnit {
+    id: Id;
+    path: Id[];
 }
 
 export interface DataElementStatus {
@@ -25,6 +32,10 @@ export interface DataElementStatus {
 
 export interface IndicatorStatus {
     visible: boolean;
+}
+
+export function getDataFormId(dataForm: DataForm): string {
+    return [dataForm.dataSet.id, dataForm.period, dataForm.orgUnit.id].join("-");
 }
 
 const defaultDataElementStatus: DataElementStatus = { visible: true, enabled: { type: "enabled" } };

@@ -8,7 +8,6 @@ import {
     DataElementText,
     DataElementBoolean,
 } from "../../../domain/entities/DataElement";
-import { DataEntry } from "../../../domain/entities/DataEntry";
 import { FormComponent } from "./FormComponent";
 import { InputTrueOnly } from "./InputTrueOnly";
 import { InputDate } from "./InputDate";
@@ -22,18 +21,18 @@ import { InputUsername } from "./InputUsername";
 export interface DataElementValueProps {
     dataElement: DataElement;
     onChange(dataForm: DataForm): void;
-    dataEntry: DataEntry;
+    dataForm: DataForm;
 }
 
 export const DataElementValue: React.FC<DataElementValueProps> = React.memo(props => {
-    const { dataElement, dataEntry, onChange } = props;
+    const { dataElement, dataForm, onChange } = props;
 
-    return <Wrapper>{renderDataElement(dataElement, dataEntry, onChange)}</Wrapper>;
+    return <Wrapper>{renderDataElement(dataElement, dataForm, onChange)}</Wrapper>;
 });
 
 function renderDataElement(
     dataElement: DataElement,
-    dataEntry: DataEntry,
+    dataForm: DataForm,
     onChange: (dataForm: DataForm) => void
 ): React.ReactChild {
     switch (dataElement.type) {
@@ -43,8 +42,8 @@ function renderDataElement(
                 <FormComponent<DataElementText>
                     component={InputText}
                     dataElement={dataElement}
-                    dataEntry={dataEntry}
-                    onChange={onChange}
+                    dataForm={dataForm}
+                    setDataForm={onChange}
                 />
             );
         case "USERNAME":
@@ -52,8 +51,8 @@ function renderDataElement(
                 <FormComponent<DataElementText>
                     component={InputUsername}
                     dataElement={dataElement}
-                    dataEntry={dataEntry}
-                    onChange={onChange}
+                    dataForm={dataForm}
+                    setDataForm={onChange}
                 />
             );
         case "BOOLEAN":
@@ -61,8 +60,8 @@ function renderDataElement(
                 <FormComponent<DataElementBoolean>
                     component={InputBoolean}
                     dataElement={dataElement}
-                    dataEntry={dataEntry}
-                    onChange={onChange}
+                    dataForm={dataForm}
+                    setDataForm={onChange}
                 />
             );
         case "TRUE_ONLY":
@@ -70,8 +69,8 @@ function renderDataElement(
                 <FormComponent<DataElementBoolean>
                     component={InputTrueOnly}
                     dataElement={dataElement}
-                    dataEntry={dataEntry}
-                    onChange={onChange}
+                    dataForm={dataForm}
+                    setDataForm={onChange}
                 />
             );
 
@@ -83,8 +82,8 @@ function renderDataElement(
                 <FormComponent<DataElementNumber>
                     component={InputNumber}
                     dataElement={dataElement}
-                    dataEntry={dataEntry}
-                    onChange={onChange}
+                    dataForm={dataForm}
+                    setDataForm={onChange}
                 />
             );
         case "DATE":
@@ -92,8 +91,8 @@ function renderDataElement(
                 <FormComponent<DataElementDate>
                     component={InputDate}
                     dataElement={dataElement}
-                    dataEntry={dataEntry}
-                    onChange={onChange}
+                    dataForm={dataForm}
+                    setDataForm={onChange}
                 />
             );
         case "OPTION":
@@ -101,8 +100,8 @@ function renderDataElement(
                 <FormComponent<DataElementOption>
                     component={InputSelector}
                     dataElement={dataElement}
-                    dataEntry={dataEntry}
-                    onChange={onChange}
+                    dataForm={dataForm}
+                    setDataForm={onChange}
                 />
             );
     }

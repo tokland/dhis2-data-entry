@@ -10,19 +10,17 @@ import {
 } from "../../../domain/entities/DataForm";
 import { TabPanel } from "./TabPanel";
 import { Collapse } from "@material-ui/core";
-import { DataEntry } from "../../../domain/entities/DataEntry";
 import { DataElementRow } from "./DataElementRow";
 import { IndicatorRow } from "./IndicatorRow";
 import { match } from "../../../utils/match";
 
 interface DataFormTabbedProps {
-    dataEntry: DataEntry;
+    dataForm: DataForm;
     setDataForm(dataForm: DataForm): void;
 }
 
 export const DataFormTabbed: React.FC<DataFormTabbedProps> = React.memo(props => {
-    const { dataEntry, setDataForm } = props;
-    const { dataForm } = dataEntry;
+    const { dataForm, setDataForm } = props;
     const [currentSectionIdx, setCurrentSectionIdxFromOnChange] = useSectionState(0);
     const sections = dataForm.dataSet.sections.filter(section => section.visible);
 
@@ -54,7 +52,7 @@ export const DataFormTabbed: React.FC<DataFormTabbedProps> = React.memo(props =>
                                         idx={idx}
                                         dataElement={dataElement}
                                         setDataForm={setDataForm}
-                                        dataEntry={dataEntry}
+                                        dataForm={dataForm}
                                     />
                                 </Collapse>
                             ),

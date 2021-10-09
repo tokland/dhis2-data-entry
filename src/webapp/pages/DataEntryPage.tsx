@@ -2,8 +2,7 @@ import React from "react";
 import { FutureData } from "../../data/future";
 import { AggregatedDataValueInfo } from "../../domain/entities/AggregatedDataValueInfo";
 import { DataElement } from "../../domain/entities/DataElement";
-import { DataForm } from "../../domain/entities/DataForm";
-import { DataSetSection } from "../../domain/entities/DataSet";
+import { DataSet, DataSetSection } from "../../domain/entities/DataSet";
 import { Future } from "../../utils/future";
 import { DataEntry } from "../components/data-entry/DataEntry";
 
@@ -34,28 +33,20 @@ export const DataEntryPage: React.FC<DataEntryPageProps> = React.memo(() => {
         visible: true,
     };
 
-    const dataForm: DataForm = {
-        dataSet: {
-            id: "NQOwInnRDNL",
-            name: "Example form",
-            sections: [section1],
-            organisationUnits: new Set(["qhFcrUfkuL6"]),
-            dataElements: { [dataElement.id]: dataElement, [dataElement2.id]: dataElement2 },
-            indicators: {},
-            periods: ["2020", "2021"],
-            logic: {
-                entities: { dataElements: {} },
-                rules: [],
-                validations: [],
-            },
-            maxOrgUnitLevel: 10,
+    const dataSet: DataSet = {
+        id: "NQOwInnRDNL",
+        name: "Example form",
+        sections: [section1],
+        organisationUnits: new Set(["qhFcrUfkuL6"]),
+        dataElements: { [dataElement.id]: dataElement, [dataElement2.id]: dataElement2 },
+        indicators: {},
+        periods: ["2020", "2021"],
+        logic: {
+            entities: { dataElements: {} },
+            rules: [],
+            validations: [],
         },
-        values: {},
-        dataElementsStatus: {},
-        indicatorsStatus: {},
-        comments: {},
-        indicatorValues: {},
-        constants: {},
+        maxOrgUnitLevel: 10,
     };
 
     const getAnalyticsInfo = React.useCallback((): FutureData<AggregatedDataValueInfo> => {
@@ -66,5 +57,5 @@ export const DataEntryPage: React.FC<DataEntryPageProps> = React.memo(() => {
         });
     }, []);
 
-    return <DataEntry dataForm={dataForm} getAnalyticsInfo={getAnalyticsInfo} />;
+    return <DataEntry dataSet={dataSet} getAnalyticsInfo={getAnalyticsInfo} />;
 });

@@ -8,14 +8,15 @@ import { TreeViewOptions } from "../tree-view/TreeView";
 import { OrgUnit } from "../../../domain/entities/OrgUnit";
 import { DataForm as DataFormE } from "../../../domain/entities/DataForm";
 import { AnalyticsInfo, AnalyticsInfoProps } from "./AnalyticsInfo";
-import { Dropdown, DropdownItem } from "@eyeseetea/d2-ui-components";
+import { Dropdown, DropdownItem, useSnackbar } from "@eyeseetea/d2-ui-components";
 import { DataEntryContext, DataEntryContextState } from "./data-entry-context";
 import { Future } from "../../../utils/future";
 import { PostDataValueOptions } from "../../../domain/usecases/PostDataValueUseCase";
 import { useAppContext } from "../../contexts/app-context";
+import { DataSet } from "../../../domain/entities/DataSet";
 
 export interface DataEntryProps {
-    dataForm: DataFormE;
+    dataSet: DataSet;
     getAnalyticsInfo: AnalyticsInfoProps["getAnalyticsInfo"];
 }
 
@@ -23,7 +24,7 @@ const rootIds: string[] = ["qhFcrUfkuL6"];
 
 export const DataEntry: React.FC<DataEntryProps> = React.memo(props => {
     const { compositionRoot } = useAppContext();
-    const { dataForm, getAnalyticsInfo } = props;
+    const { dataSet, getAnalyticsInfo } = props;
 
     const [orgUnit, setOrgUnit] = React.useState<OrgUnit>();
 
@@ -31,6 +32,7 @@ export const DataEntry: React.FC<DataEntryProps> = React.memo(props => {
 
     const [_indicatorsKey, setIndicatorsKey] = React.useState("");
 
+    // TODO
     //const rootIds = React.useMemo(() => config.currentUser.orgUnitsCapture.map(getId), [config]);
 
     const [period, setPeriod] = React.useState<string | undefined>("2021");
@@ -46,6 +48,17 @@ export const DataEntry: React.FC<DataEntryProps> = React.memo(props => {
             return Future.success([]);
         },
     };
+
+    const [dataForm, setDataForm] = React.useState<DataFormE>();
+    const snackbar = useSnackbar();
+
+    React.useEffect(() => {
+        if (!period || !orgUnit) return;
+
+        return compositionRoot.getDataForm
+            .execute({ dataSet, orgUnit, period })
+            .run(setDataForm, err => snackbar.error(err));
+    }, [compositionRoot, dataSet, orgUnit, period, snackbar]);
 
     return (
         <DataEntryContext.Provider value={dataEntryContext}>
@@ -67,7 +80,7 @@ export const DataEntry: React.FC<DataEntryProps> = React.memo(props => {
                         />
                     </HeaderBox>
 
-                    {orgUnit && dataForm && dataForm.dataSet.organisationUnits.has(orgUnit.id) ? (
+                    {dataForm && dataForm.dataSet.organisationUnits.has(dataForm.orgUnit.id) ? (
                         <>
                             <DataFormWrapper>
                                 <PeriodSelector>
@@ -81,14 +94,7 @@ export const DataEntry: React.FC<DataEntryProps> = React.memo(props => {
                                 </PeriodSelector>
                             </DataFormWrapper>
 
-                            {period && (
-                                <DataForm
-                                    key={[dataForm.dataSet.id, period, orgUnit.id].join("-")}
-                                    dataForm={dataForm}
-                                    period={period}
-                                    orgUnit={orgUnit}
-                                />
-                            )}
+                            {period && <DataForm dataForm={dataForm} setDataForm={setDataForm} />}
                         </>
                     ) : (
                         i18n.t("Select an organisation unit assigned to the dataset to enter data")

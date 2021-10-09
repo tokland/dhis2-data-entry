@@ -14,18 +14,18 @@ import {
 } from "@material-ui/core";
 import React from "react";
 import { DataElement } from "../../../domain/entities/DataElement";
-import { DataEntry } from "../../../domain/entities/DataEntry";
+import { DataForm } from "../../../domain/entities/DataForm";
 import { DataValueAudit as DataValueAuditE } from "../../../domain/entities/DataValueAudit";
 import i18n from "../../../locales";
 import { useAppContext } from "../../contexts/app-context";
 
 export interface DataValueCommentProps {
     dataElement: DataElement;
-    dataEntry: DataEntry;
+    dataForm: DataForm;
 }
 
 export const DataValueAudit: React.FC<DataValueCommentProps> = React.memo(props => {
-    const { dataElement, dataEntry } = props;
+    const { dataElement, dataForm } = props;
     const { compositionRoot } = useAppContext();
     const snackbar = useSnackbar();
     const classes = useStyles();
@@ -35,11 +35,11 @@ export const DataValueAudit: React.FC<DataValueCommentProps> = React.memo(props 
         compositionRoot.dataValues.getAudit
             .execute({
                 dataElementId: dataElement.id,
-                orgUnitId: dataEntry.orgUnit.id,
-                period: dataEntry.period,
+                orgUnitId: dataForm.orgUnit.id,
+                period: dataForm.period,
             })
             .run(setRows, snackbar.error);
-    }, [compositionRoot, dataElement.id, dataEntry.orgUnit.id, dataEntry.period, snackbar]);
+    }, [compositionRoot, dataElement.id, dataForm.orgUnit.id, dataForm.period, snackbar]);
 
     return (
         <Card className={classes.root}>

@@ -1,15 +1,18 @@
+import _ from "lodash";
 import { DataValueRepository } from "../repositories/DataValueRepository";
 import { FutureData } from "../../data/future";
 import { Config } from "../entities/Config";
-import { DataForm, updateDataValues } from "../entities/DataForm";
+import { DataForm } from "../entities/DataForm";
 import { OrgUnit } from "../entities/OrgUnit";
 import { Future } from "../../utils/future";
 import { OrgUnitRepository } from "../repositories/OrgUnitRepository";
 import { AggregatedDataValueRepository } from "../repositories/AggregatedDataValueRepository";
 import { updateDataFormIndicators } from "./indicators";
+import { DataSet } from "../entities/DataSet";
+import { getValueFromString } from "../entities/DataElement";
 
 interface Options {
-    dataForm: DataForm;
+    dataSet: DataSet;
     orgUnit: OrgUnit;
     period: string;
 }
@@ -24,25 +27,42 @@ export class GetDataFormUseCase {
 
     execute(options: Options): FutureData<DataForm> {
         const { config, dataValueRepository, aggregatedDataValueRepository } = this;
-        const { dataForm, orgUnit, period } = options;
+        const { dataSet, orgUnit, period } = options;
         const orgUnitId = orgUnit.id;
 
         const dataValues$ = dataValueRepository.get({
             orgUnitIds: [orgUnitId],
-            dataSetIds: [dataForm.dataSet.id],
+            dataSetIds: [dataSet.id],
             periods: [period],
         });
 
         return Future.joinObj({ dataValues: dataValues$ }).flatMap(({ dataValues }) => {
-            const dataForm3 = updateDataValues(dataForm, dataValues);
+            const infoByDataElementId = _(dataValues)
+                .map(dv => {
+                    const dataElement = dataSet.dataElements[dv.dataElementId];
+                    if (!dataElement) return undefined;
+                    const value = getValueFromString(dataElement, dv.value);
+                    const comment = dv.comment;
+                    const obj = { value, comment };
+                    return [dataElement.id, obj] as [typeof dataElement.id, typeof obj];
+                })
+                .compact()
+                .fromPairs()
+                .value();
 
-            return updateDataFormIndicators({
-                config,
-                aggregatedDataValueRepository,
+            const dataForm: DataForm = {
+                dataSet,
                 period,
-                orgUnitPath: orgUnit.path,
-                dataForm: dataForm3,
-            });
+                orgUnit,
+                values: _.mapValues(infoByDataElementId, val => val.value),
+                comments: _.mapValues(infoByDataElementId, val => val.comment),
+                dataElementsStatus: {},
+                indicatorsStatus: {},
+                indicatorValues: {},
+                constants: {},
+            };
+
+            return updateDataFormIndicators({ config, aggregatedDataValueRepository, dataForm: dataForm });
         });
     }
 }
