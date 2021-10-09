@@ -32,8 +32,9 @@ export function FormComponent<DE extends DataElement>(props: FormComponentPropsF
     const { saveDataValue } = useDataEntryContext();
     const snackbar = useSnackbar();
     const [refreshKey, refresh] = useRefresher();
-    const { dataForm, orgUnitPath, period } = dataEntry;
+    const { dataForm, orgUnit, period } = dataEntry;
     const [savingState, setSavingState] = React.useState<SavingState>("original");
+    const orgUnitPath = orgUnit.path;
 
     const save = React.useCallback(
         (value: ValueOf<DE>) => {

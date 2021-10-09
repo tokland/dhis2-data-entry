@@ -48,12 +48,7 @@ export const DataForm: React.FC<DataFormProps> = React.memo(props => {
             .run(
                 dataForm => {
                     dataFormRef.current = dataForm;
-                    return setDataEntry({
-                        dataForm,
-                        period,
-                        orgUnitId: orgUnit.id,
-                        orgUnitPath: orgUnit.path,
-                    });
+                    return setDataEntry({ dataForm, period, orgUnit });
                 },
                 err => snackbar.error(err)
             );

@@ -35,11 +35,11 @@ export const DataValueAudit: React.FC<DataValueCommentProps> = React.memo(props 
         compositionRoot.dataValues.getAudit
             .execute({
                 dataElementId: dataElement.id,
-                orgUnitId: dataEntry.orgUnitId,
+                orgUnitId: dataEntry.orgUnit.id,
                 period: dataEntry.period,
             })
             .run(setRows, snackbar.error);
-    }, [compositionRoot, dataElement.id, dataEntry.orgUnitId, dataEntry.period, snackbar]);
+    }, [compositionRoot, dataElement.id, dataEntry.orgUnit.id, dataEntry.period, snackbar]);
 
     return (
         <Card className={classes.root}>
