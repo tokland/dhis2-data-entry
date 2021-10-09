@@ -2,11 +2,9 @@ import { Id } from "./Base";
 import { DataForm } from "./DataForm";
 
 export interface DataEntry {
-    // TODO: create type without dataForm -> DataEntryParams
-    dataForm: DataForm;
+    dataForm: DataForm; // Move plain DataForm here?
     period: string;
     orgUnit: DataEntryOrgUnit;
-    // Move here dataValues and indicatorValues
 }
 
 interface DataEntryOrgUnit {

@@ -1,5 +1,3 @@
-import _ from "lodash";
-import { Code } from "./Base";
 import { DataElement } from "./DataElement";
 import {
     DataForm,
@@ -7,12 +5,14 @@ import {
     setDataElementValueFromString,
     enableDataElement,
     disableDataElement,
+    setIndicatorVisibility,
 } from "./DataForm";
+import { Indicator } from "./Indicator";
 
 // TODO: setSectionVisibility sectionName -> Section
 export type RuleAction =
-    | { type: "setDataElementsVisibility"; dataElements: DataElement[]; isVisible: boolean }
-    | { type: "setIndicatorVisibility"; code: Code; isVisible: boolean }
+    | { type: "setDataElementsVisibility"; dataElement: DataElement; isVisible: boolean }
+    | { type: "setIndicatorVisibility"; indicator: Indicator; isVisible: boolean }
     | { type: "setSectionVisibility"; sectionName: string; isVisible: boolean }
     | { type: "setDataElementValue"; dataElement: DataElement; value: string }
     | {
@@ -25,11 +25,8 @@ export type RuleAction =
 export function runAction(dataForm: DataForm, action: RuleAction): DataForm {
     switch (action.type) {
         case "setDataElementsVisibility": {
-            const { dataElements, isVisible } = action;
-
-            return dataElements.reduce((dataFormAcc, dataElement) => {
-                return setDataElementVisibility(dataFormAcc, dataElement, isVisible);
-            }, dataForm);
+            const { dataElement, isVisible } = action;
+            return setDataElementVisibility(dataForm, dataElement, isVisible);
         }
 
         case "setSectionVisibility": {
@@ -41,11 +38,8 @@ export function runAction(dataForm: DataForm, action: RuleAction): DataForm {
         }
 
         case "setIndicatorVisibility": {
-            const { code, isVisible } = action;
-            const indicators = Array.from(dataForm.hidden.indicators);
-            const newIndicators = !isVisible ? indicators.concat([code]) : _.without(indicators, code);
-
-            return { ...dataForm, hidden: { ...dataForm.hidden, indicators: new Set(newIndicators) } };
+            const { indicator, isVisible } = action;
+            return setIndicatorVisibility(dataForm, indicator, isVisible);
         }
 
         case "setDataElementValue": {

@@ -52,9 +52,9 @@ export const DataEntryPage: React.FC<DataEntryPageProps> = React.memo(() => {
         },
         values: {},
         dataElementsStatus: {},
+        indicatorsStatus: {},
         comments: {},
         indicatorValues: {},
-        hidden: { indicators: new Set() },
         constants: {},
     };
 

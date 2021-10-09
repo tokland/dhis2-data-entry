@@ -13,7 +13,7 @@ export interface DataForm {
     values: Record<DataElementId, Maybe<DataElementValue>>;
     comments: Record<DataElementId, Maybe<string>>;
     indicatorValues: Record<IndicatorId, string>;
-    hidden: { indicators: Set<Code> };
+    indicatorsStatus: Record<IndicatorId, IndicatorStatus>;
     constants: Record<Code, number>;
     dataElementsStatus: Record<DataElementId, DataElementStatus>;
 }
@@ -23,16 +23,39 @@ export interface DataElementStatus {
     enabled: DataElementEnabledStatus;
 }
 
+export interface IndicatorStatus {
+    visible: boolean;
+}
+
+const defaultDataElementStatus: DataElementStatus = { visible: true, enabled: { type: "enabled" } };
+const defaultIndicatorStatus: IndicatorStatus = { visible: true };
+
 export type DataElementEnabledStatus = { type: "enabled" } | { type: "disabled"; reason: string };
 
 export function isDataElementVisible(dataForm: DataForm, dataElement: DataElement): boolean {
     return getDataElementStatus(dataForm, dataElement).visible;
 }
 
-const defaultDataElementStatus: DataElementStatus = { visible: true, enabled: { type: "enabled" } };
-
 export function getDataElementStatus(dataForm: DataForm, dataElement: DataElement): DataElementStatus {
     return dataForm.dataElementsStatus[dataElement.id] || defaultDataElementStatus;
+}
+
+export function setIndicatorVisibility(
+    dataForm: DataForm,
+    indicator: Indicator,
+    isVisible: boolean
+): DataForm {
+    const prevStatus = dataForm.indicatorsStatus[indicator.id];
+    const newStatus: IndicatorStatus = {
+        ...defaultIndicatorStatus,
+        ...prevStatus,
+        visible: isVisible,
+    };
+    const indicatorsStatus = {
+        ...dataForm.indicatorsStatus,
+        [indicator.id]: newStatus,
+    };
+    return { ...dataForm, indicatorsStatus };
 }
 
 export function enableDataElement(dataForm: DataForm, dataElement: DataElement): DataForm {
@@ -185,7 +208,8 @@ function getIndicatorsForSection(dataForm: DataForm, section: DataSetSection): I
 }
 
 export function isIndicatorVisible(dataForm: DataForm, indicator: Indicator): boolean {
-    return !dataForm.hidden.indicators.has(indicator.code);
+    const status = dataForm.indicatorsStatus[indicator.id] || defaultIndicatorStatus;
+    return status.visible;
 }
 
 export function isOrgUnitAssignedToDataForm(dataForm: DataForm, orgUnitId: Id) {
