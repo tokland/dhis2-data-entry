@@ -37,7 +37,11 @@ export const DataEntry: React.FC<DataEntryProps> = React.memo(props => {
 
     const [period, setPeriod] = React.useState<string | undefined>("2021");
 
-    const periodItems: DropdownItem[] = [{ value: "2021", text: "2021" }];
+    // TODO
+    const periodItems: DropdownItem[] = React.useMemo(
+        () => dataSet.periods.map(period => ({ value: period, text: period })),
+        [dataSet]
+    );
 
     const dataEntryContext: DataEntryContextState = {
         indicatorsKey: "key",
