@@ -2,7 +2,8 @@ import React from "react";
 import { FutureData } from "../../data/future";
 import { AggregatedDataValueInfo } from "../../domain/entities/AggregatedDataValueInfo";
 import { DataElement } from "../../domain/entities/DataElement";
-import { DataForm, DataFormSection } from "../../domain/entities/DataForm";
+import { DataForm } from "../../domain/entities/DataForm";
+import { DataSetSection } from "../../domain/entities/DataSet";
 import { Future } from "../../utils/future";
 import { DataEntry } from "../components/data-entry/DataEntry";
 
@@ -13,8 +14,6 @@ export const DataEntryPage: React.FC<DataEntryPageProps> = React.memo(() => {
         id: "WmKwIxATeAB",
         name: "Country Grant - # Training Events",
         code: "TRAINING_EVENTS",
-        visible: true,
-        status: { type: "enabled" },
         description: "description",
         type: "INTEGER_ZERO_OR_POSITIVE",
     };
@@ -23,13 +22,11 @@ export const DataEntryPage: React.FC<DataEntryPageProps> = React.memo(() => {
         id: "RivqZao3W5N",
         name: "Country Grant - Inherit Template",
         code: "INHERIT_TEMPLATE",
-        visible: true,
-        status: { type: "enabled" },
         description: "description",
         type: "BOOLEAN",
     };
 
-    const section1: DataFormSection = {
+    const section1: DataSetSection = {
         id: "section1",
         name: "Section 1",
         dataElementIds: ["WmKwIxATeAB", "RivqZao3W5N"],
@@ -38,24 +35,27 @@ export const DataEntryPage: React.FC<DataEntryPageProps> = React.memo(() => {
     };
 
     const dataForm: DataForm = {
-        id: "NQOwInnRDNL",
-        name: "Example form",
-        sections: [section1],
-        organisationUnits: new Set(["qhFcrUfkuL6"]),
-        dataElements: { [dataElement.id]: dataElement, [dataElement2.id]: dataElement2 },
-        values: {},
-        comments: {},
-        indicators: {},
-        logic: {
-            entities: { dataElements: {} },
-            rules: [],
-            validations: [],
+        id: "dataForm-NQOwInnRDNL",
+        dataSet: {
+            id: "NQOwInnRDNL",
+            name: "Example form",
+            sections: [section1],
+            organisationUnits: new Set(["qhFcrUfkuL6"]),
+            dataElements: { [dataElement.id]: dataElement, [dataElement2.id]: dataElement2 },
+            indicators: {},
+            periods: ["2020", "2021"],
+            logic: {
+                entities: { dataElements: {} },
+                rules: [],
+                validations: [],
+            },
+            maxOrgUnitLevel: 10,
         },
-        maxOrgUnitLevel: 10,
-        childrenOrgUnits: [],
+        values: {},
+        dataElementsStatus: {},
+        comments: {},
         indicatorValues: {},
         hidden: { indicators: new Set() },
-        periods: ["2020", "2021"],
         constants: {},
     };
 

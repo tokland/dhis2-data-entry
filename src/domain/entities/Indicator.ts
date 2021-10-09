@@ -43,7 +43,7 @@ export function evalIndicatorExpression(
     dataForm: DataForm,
     config: Config
 ): Either<EvalError, string> {
-    const values = _(dataForm.dataElements)
+    const values = _(dataForm.dataSet.dataElements)
         .values()
         .map(
             dataElement => [dataElement.id, getValue(dataForm, dataElement)?.toString() || ""] as [Id, string]

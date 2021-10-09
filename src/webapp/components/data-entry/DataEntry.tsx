@@ -67,7 +67,7 @@ export const DataEntry: React.FC<DataEntryProps> = React.memo(props => {
                         />
                     </HeaderBox>
 
-                    {orgUnit && dataForm && dataForm.organisationUnits.has(orgUnit.id) ? (
+                    {orgUnit && dataForm && dataForm.dataSet.organisationUnits.has(orgUnit.id) ? (
                         <>
                             <DataFormWrapper>
                                 <PeriodSelector>

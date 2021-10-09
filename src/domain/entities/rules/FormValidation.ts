@@ -29,7 +29,7 @@ export function validate(options: {
     dataElement: DataElement;
 }): Validation$ {
     const { config, dataForm, dataElement } = options;
-    const { validations } = dataForm.logic;
+    const { validations } = dataForm.dataSet.logic;
 
     const baseError = validateDataElementValue(dataElement, getValue(dataForm, dataElement));
     if (baseError) return validationError(baseError);

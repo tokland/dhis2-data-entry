@@ -33,14 +33,8 @@ export class GetDataFormUseCase {
             periods: [period],
         });
 
-        const childrenOrgUnits$ = this.orgUnitRepository.getChildren(orgUnitId);
-
-        return Future.joinObj({
-            dataValues: dataValues$,
-            childrenOrgUnits: childrenOrgUnits$,
-        }).flatMap(({ dataValues, childrenOrgUnits }) => {
-            const dataForm2: DataForm = { ...dataForm, childrenOrgUnits };
-            const dataForm3 = updateDataValues(dataForm2, dataValues);
+        return Future.joinObj({ dataValues: dataValues$ }).flatMap(({ dataValues }) => {
+            const dataForm3 = updateDataValues(dataForm, dataValues);
 
             return updateDataFormIndicators({
                 config,

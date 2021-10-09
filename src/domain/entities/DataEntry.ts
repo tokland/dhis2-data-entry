@@ -19,5 +19,5 @@ export function getDataEntryKey(dataEntry: DataEntry): string {
 }
 
 export function getDataEntryTitle(dataEntry: DataEntry): string {
-    return [dataEntry.dataForm.name].join(" - ");
+    return [dataEntry.dataForm.dataSet.name].join(" - ");
 }

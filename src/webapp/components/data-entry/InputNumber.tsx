@@ -5,7 +5,7 @@ import { formatNumber } from "../../../utils/basic";
 import { makeStyles } from "@material-ui/core";
 
 export const InputNumber: React.FC<InnerComponentPropsFor<DataElementNumber>> = React.memo(props => {
-    const { dataElement, value, onChange, style } = props;
+    const { dataElement, value, onChange, style, enabled } = props;
 
     const [stateValue, setStateValue] = React.useState(value);
 
@@ -21,13 +21,13 @@ export const InputNumber: React.FC<InnerComponentPropsFor<DataElementNumber>> = 
         [onChange]
     );
 
-    const isAutocalculated = dataElement.status.type === "disabled";
+    const isAutocalculated = enabled.type === "disabled";
     const isInteger = ["INTEGER", "INTEGER_ZERO_OR_POSITIVE", "PERCENTAGE"].includes(dataElement.type);
     const step = isInteger ? 1 : 0.1;
     const classes = useStyles();
 
     if (isAutocalculated) {
-        const disabledReason = dataElement.status.type === "disabled" ? dataElement.status.reason : undefined;
+        const disabledReason = enabled.type === "disabled" ? enabled.reason : undefined;
         const title = disabledReason || undefined;
         const decimals = isInteger ? 0 : 2;
         const strValue = stateValue !== undefined ? formatNumber(stateValue, decimals) : "";

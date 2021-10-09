@@ -9,9 +9,6 @@ interface DataElementBase {
     code: string;
     name: string;
     description: string;
-    // TODO: Move to another entity
-    visible: boolean;
-    status: DataElementStatus;
 }
 
 export type DataElement =
@@ -21,7 +18,6 @@ export type DataElement =
     | DataElementDate
     | DataElementOption;
 
-export type DataElementStatus = { type: "enabled" } | { type: "disabled"; reason: string };
 export type DataElementId = Id;
 export type DataElementCode = string;
 

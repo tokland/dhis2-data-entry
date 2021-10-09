@@ -114,7 +114,7 @@ function getDataValuesForDataFormUpdate(options: {
 }) {
     const { dataForm, dataFormUpdated, period, orgUnitId } = options;
 
-    const dataValuesToPost = _(dataFormUpdated.dataElements)
+    const dataValuesToPost = _(dataFormUpdated.dataSet.dataElements)
         .values()
         .map(de => (getValue(dataForm, de) !== getValue(dataFormUpdated, de) ? de : null))
         .compact()

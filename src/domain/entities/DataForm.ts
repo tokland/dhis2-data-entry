@@ -4,28 +4,78 @@ import { DataElement, DataElementId, DataElementValue, getValueFromString, Value
 import { DataValue } from "./DataValue";
 import { Indicator, IndicatorId } from "./Indicator";
 import { applyRulesToDataForm } from "./Rule";
-import { DataFormLogic } from "./DataFormLogic";
 import { sortDataItems, SortingInfo } from "./DataItem";
-import { OrgUnit } from "./OrgUnit";
 import { Maybe } from "../../utils/ts-utils";
+import { DataSet, DataSetSection } from "./DataSet";
 
-// TODO: Create a DataSet that contains no values, current orgUnit, nor visibility
 export interface DataForm {
     id: Id;
-    name: string;
-    sections: DataFormSection[];
-    organisationUnits: Set<Id>;
-    dataElements: Record<Id, DataElement>;
-    indicators: Record<Id, Indicator>;
-    logic: DataFormLogic;
-    maxOrgUnitLevel: number;
-    childrenOrgUnits: OrgUnit[];
+    dataSet: DataSet;
     values: Record<DataElementId, Maybe<DataElementValue>>;
     comments: Record<DataElementId, Maybe<string>>;
     indicatorValues: Record<IndicatorId, string>;
     hidden: { indicators: Set<Code> };
-    periods: string[];
     constants: Record<Code, number>;
+    dataElementsStatus: Record<DataElementId, DataElementStatus>;
+}
+
+export interface DataElementStatus {
+    visible: boolean;
+    enabled: DataElementEnabledStatus;
+}
+
+export type DataElementEnabledStatus = { type: "enabled" } | { type: "disabled"; reason: string };
+
+export function isDataElementVisible(dataForm: DataForm, dataElement: DataElement): boolean {
+    return dataForm.dataElementsStatus[dataElement.id]?.visible || false;
+}
+
+const defaultDataElementStatus: DataElementStatus = { visible: true, enabled: { type: "enabled" } };
+
+export function getDataElementStatus(dataForm: DataForm, dataElement: DataElement): DataElementStatus {
+    return dataForm.dataElementsStatus[dataElement.id] || defaultDataElementStatus;
+}
+
+export function enableDataElement(dataForm: DataForm, dataElement: DataElement): DataForm {
+    const prevStatus = dataForm.dataElementsStatus[dataElement.id];
+    const newStatus: DataElementStatus = {
+        ...defaultDataElementStatus,
+        ...prevStatus,
+        enabled: { type: "enabled" },
+    };
+    const dataElementsStatus = {
+        ...dataForm.dataElementsStatus,
+        [dataElement.id]: newStatus,
+    };
+    return { ...dataForm, dataElementsStatus };
+}
+
+export function disableDataElement(dataForm: DataForm, dataElement: DataElement, reason: string): DataForm {
+    const prevStatus = dataForm.dataElementsStatus[dataElement.id];
+    const newStatus: DataElementStatus = {
+        ...defaultDataElementStatus,
+        ...prevStatus,
+        enabled: { type: "disabled", reason },
+    };
+    const dataElementsStatus = {
+        ...dataForm.dataElementsStatus,
+        [dataElement.id]: newStatus,
+    };
+    return { ...dataForm, dataElementsStatus };
+}
+
+export function setDataElementVisibility(
+    dataForm: DataForm,
+    dataElement: DataElement,
+    isVisible: boolean
+): DataForm {
+    const prevStatus = dataForm.dataElementsStatus[dataElement.id];
+    const newStatus: DataElementStatus = { ...defaultDataElementStatus, ...prevStatus, visible: isVisible };
+    const dataElementsStatus = {
+        ...dataForm.dataElementsStatus,
+        [dataElement.id]: newStatus,
+    };
+    return { ...dataForm, dataElementsStatus };
 }
 
 export function getValue<DE extends DataElement>(dataForm: DataForm, dataElement: DE): ValueOf<DE> {
@@ -61,14 +111,6 @@ export function setDataElementValueFromString<DE extends DataElement>(
     return setDataValue(dataForm, dataElement, value);
 }
 
-export interface DataFormSection {
-    id: string;
-    name: string;
-    dataElementIds: Id[];
-    indicatorIds: Id[];
-    visible: boolean;
-}
-
 type DataFormAttrs = DataForm;
 
 export function buildDataForm(dataForm: DataFormAttrs): DataForm {
@@ -78,14 +120,17 @@ export function buildDataForm(dataForm: DataFormAttrs): DataForm {
 export function setDataFormDataElement(dataForm: DataForm, dataElement: DataElement): DataForm {
     return {
         ...dataForm,
-        dataElements: { ...dataForm.dataElements, [dataElement.id]: dataElement },
+        dataSet: {
+            ...dataForm.dataSet,
+            dataElements: { ...dataForm.dataSet.dataElements, [dataElement.id]: dataElement },
+        },
     };
 }
 
 export function updateDataValuesWithoutProcessing(dataForm: DataForm, dataValues: DataValue[]): DataForm {
     const valueByDataElementId = _.keyBy(dataValues, dv => dv.dataElementId);
 
-    const dataFormUpdated = _(dataForm.dataElements)
+    const dataFormUpdated = _(dataForm.dataSet.dataElements)
         .values()
         .reduce((dataFormAcc, dataElement) => {
             const dataValue = valueByDataElementId[dataElement.id];
@@ -107,7 +152,7 @@ export function updateDataValues(dataForm: DataForm, dataValues: DataValue[]): D
 
 type DataItem = { type: "dataElement"; item: DataElement } | { type: "indicator"; item: Indicator };
 
-export function getDataItemsForSection(dataForm: DataForm, section: DataFormSection): DataItem[] {
+export function getDataItemsForSection(dataForm: DataForm, section: DataSetSection): DataItem[] {
     const dataElements = getDataElementsForSection(dataForm, section);
     const indicators = getIndicatorsForSection(dataForm, section);
 
@@ -126,16 +171,16 @@ export function getDataItemsForSection(dataForm: DataForm, section: DataFormSect
     return sortDataItems(dataElementItems, indicatorItems, sortingInfo);
 }
 
-function getDataElementsForSection(dataForm: DataForm, section: DataFormSection): DataElement[] {
+function getDataElementsForSection(dataForm: DataForm, section: DataSetSection): DataElement[] {
     return _(section.dataElementIds)
-        .map(deId => dataForm.dataElements[deId])
+        .map(deId => dataForm.dataSet.dataElements[deId])
         .compact()
         .value();
 }
 
-function getIndicatorsForSection(dataForm: DataForm, section: DataFormSection): Indicator[] {
+function getIndicatorsForSection(dataForm: DataForm, section: DataSetSection): Indicator[] {
     return _(section.indicatorIds)
-        .map(deId => dataForm.indicators[deId])
+        .map(deId => dataForm.dataSet.indicators[deId])
         .compact()
         .value();
 }
@@ -145,5 +190,5 @@ export function isIndicatorVisible(dataForm: DataForm, indicator: Indicator): bo
 }
 
 export function isOrgUnitAssignedToDataForm(dataForm: DataForm, orgUnitId: Id) {
-    return dataForm.organisationUnits.has(orgUnitId);
+    return dataForm.dataSet.organisationUnits.has(orgUnitId);
 }

@@ -2,7 +2,12 @@ import React from "react";
 import AppBar from "@material-ui/core/AppBar";
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
-import { DataForm, getDataItemsForSection, isIndicatorVisible } from "../../../domain/entities/DataForm";
+import {
+    DataForm,
+    getDataItemsForSection,
+    isDataElementVisible,
+    isIndicatorVisible,
+} from "../../../domain/entities/DataForm";
 import { TabPanel } from "./TabPanel";
 import { Collapse } from "@material-ui/core";
 import { DataEntry } from "../../../domain/entities/DataEntry";
@@ -19,7 +24,7 @@ export const DataFormTabbed: React.FC<DataFormTabbedProps> = React.memo(props =>
     const { dataEntry, setDataForm } = props;
     const { dataForm } = dataEntry;
     const [currentSectionIdx, setCurrentSectionIdxFromOnChange] = useSectionState(0);
-    const sections = dataForm.sections.filter(section => section.visible);
+    const sections = dataForm.dataSet.sections.filter(section => section.visible);
 
     return (
         <div>
@@ -41,7 +46,10 @@ export const DataFormTabbed: React.FC<DataFormTabbedProps> = React.memo(props =>
                     {getDataItemsForSection(dataForm, section).map((item, idx) =>
                         match(item, {
                             dataElement: ({ item: dataElement }) => (
-                                <Collapse in={dataElement.visible} key={dataElement.id}>
+                                <Collapse
+                                    in={isDataElementVisible(dataForm, dataElement)}
+                                    key={dataElement.id}
+                                >
                                     <DataElementRow
                                         idx={idx}
                                         dataElement={dataElement}
@@ -63,7 +71,9 @@ export const DataFormTabbed: React.FC<DataFormTabbedProps> = React.memo(props =>
     );
 });
 
-function useSectionState(initialSectionIdx: number): [number, (_ev: React.ChangeEvent<{}>, index: number) => void] {
+function useSectionState(
+    initialSectionIdx: number
+): [number, (_ev: React.ChangeEvent<{}>, index: number) => void] {
     const [currentSectionIdx, setCurrentSectionIdx] = React.useState(initialSectionIdx);
 
     const setCurrentSectionIdxFromOnChange = React.useCallback(

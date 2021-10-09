@@ -1,7 +1,13 @@
 import _ from "lodash";
 import { Code } from "./Base";
-import { DataElement, DataElementStatus } from "./DataElement";
-import { DataForm, setDataElementValueFromString, setDataFormDataElement } from "./DataForm";
+import { DataElement } from "./DataElement";
+import {
+    DataForm,
+    setDataElementVisibility,
+    setDataElementValueFromString,
+    enableDataElement,
+    disableDataElement,
+} from "./DataForm";
 
 // TODO: setSectionVisibility sectionName -> Section
 export type RuleAction =
@@ -21,25 +27,17 @@ export function runAction(dataForm: DataForm, action: RuleAction): DataForm {
         case "setDataElementsVisibility": {
             const { dataElements, isVisible } = action;
 
-            const updatedDataElementsById = _(dataElements)
-                .map((de): DataElement => {
-                    const dataFormDe = dataForm.dataElements[de.id];
-                    return dataFormDe ? { ...dataFormDe, visible: isVisible } : de;
-                })
-                .keyBy(de => de.id)
-                .value();
-
-            const dataElementsUpdated = { ...dataForm.dataElements, ...updatedDataElementsById };
-
-            return { ...dataForm, dataElements: dataElementsUpdated };
+            return dataElements.reduce((dataFormAcc, dataElement) => {
+                return setDataElementVisibility(dataFormAcc, dataElement, isVisible);
+            }, dataForm);
         }
 
         case "setSectionVisibility": {
             const { sectionName, isVisible } = action;
-            const sectionsUpdated = dataForm.sections.map(section =>
+            const sectionsUpdated = dataForm.dataSet.sections.map(section =>
                 section.name === sectionName ? { ...section, visible: isVisible } : section
             );
-            return { ...dataForm, sections: sectionsUpdated };
+            return { ...dataForm, dataSet: { ...dataForm.dataSet, sections: sectionsUpdated } };
         }
 
         case "setIndicatorVisibility": {
@@ -52,7 +50,7 @@ export function runAction(dataForm: DataForm, action: RuleAction): DataForm {
 
         case "setDataElementValue": {
             const { dataElement, value } = action;
-            const dataFormDataElement = dataForm.dataElements[dataElement.id];
+            const dataFormDataElement = dataForm.dataSet.dataElements[dataElement.id];
             return dataFormDataElement
                 ? setDataElementValueFromString(dataForm, dataFormDataElement, value)
                 : dataForm;
@@ -60,13 +58,9 @@ export function runAction(dataForm: DataForm, action: RuleAction): DataForm {
 
         case "setDataElementEditable": {
             const { dataElement, isEditable, disabledReason } = action;
-            const dataFormDataElement = dataForm.dataElements[dataElement.id];
-            const newStatus: DataElementStatus = isEditable
-                ? { type: "enabled" }
-                : { type: "disabled", reason: disabledReason };
-            return dataFormDataElement
-                ? setDataFormDataElement(dataForm, { ...dataFormDataElement, status: newStatus })
-                : dataForm;
+            return isEditable
+                ? enableDataElement(dataForm, dataElement)
+                : disableDataElement(dataForm, dataElement, disabledReason);
         }
     }
 }

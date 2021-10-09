@@ -8,13 +8,21 @@ import { DataElementInfo } from "./DataElementInfo";
 import { DataEntry } from "../../../domain/entities/DataEntry";
 import { useCallbackEffect } from "../../hooks/use-callback-effect";
 import { useDataEntryContext } from "./data-entry-context";
-import { DataForm, getValue, setDataValue } from "../../../domain/entities/DataForm";
+import {
+    DataElementStatus,
+    DataForm,
+    getDataElementStatus,
+    getValue,
+    setDataValue,
+} from "../../../domain/entities/DataForm";
 import { getMessages } from "../../../domain/entities/rules/Validation";
 
 export interface InnerComponentPropsFor<DE extends DataElement> {
     style: CSSProperties;
     dataElement: DE;
     value: ValueOf<DE>;
+    enabled: DataElementStatus["enabled"];
+    visible: DataElementStatus["visible"];
     onChange(value: ValueOf<DE>): void;
 }
 
@@ -103,6 +111,8 @@ export function FormComponent<DE extends DataElement>(props: FormComponentPropsF
         [onChange]
     );
 
+    const { enabled, visible } = getDataElementStatus(dataForm, dataElement);
+
     return (
         <div>
             <Component
@@ -110,6 +120,8 @@ export function FormComponent<DE extends DataElement>(props: FormComponentPropsF
                 key={refreshKey}
                 style={feedbackStyles[savingState]}
                 dataElement={dataElement}
+                enabled={enabled}
+                visible={visible}
                 onChange={save$}
             />
 

@@ -27,10 +27,10 @@ export function rule<DEKey extends string>(ruleAttributes: Rule<DEKey>): Rule<DE
 }
 
 export function getDataElementsFromDataForm(dataForm: DataForm): Record<string, DataElement> {
-    const { entities } = dataForm.logic;
+    const { entities } = dataForm.dataSet.logic;
     const { dataElements: dataElementsCodeByKey } = entities;
 
-    const dataElementsByCode = _(dataForm.dataElements)
+    const dataElementsByCode = _(dataForm.dataSet.dataElements)
         .values()
         .map(dataElement => [dataElement.code, dataElement] as [string, DataElement])
         .fromPairs()
@@ -55,7 +55,7 @@ export function getDataElementsFromDataForm(dataForm: DataForm): Record<string, 
 }
 
 export function applyRulesToDataForm(dataForm: DataForm): DataForm {
-    return dataForm.logic.rules.reduce((currentDataForm, rule) => {
+    return dataForm.dataSet.logic.rules.reduce((currentDataForm, rule) => {
         const dataElements = getDataElementsFromDataForm(currentDataForm);
         const ruleData: RuleData = { dataForm, dataElements };
         const actions = rule.actions(ruleData);

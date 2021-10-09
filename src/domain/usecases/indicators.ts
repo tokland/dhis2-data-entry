@@ -17,8 +17,10 @@ export function updateDataFormIndicators(options: {
 }): FutureData<DataForm> {
     const { dataForm } = options;
 
-    const indicatorPairs$Ary = _.values(dataForm.indicators).map(indicator => {
-        return getIndicatorValue({ ...options, indicator }).map(value => [indicator.id, value] as [Id, string]);
+    const indicatorPairs$Ary = _.values(dataForm.dataSet.indicators).map(indicator => {
+        return getIndicatorValue({ ...options, indicator }).map(
+            value => [indicator.id, value] as [Id, string]
+        );
     });
 
     return Future.parallel(indicatorPairs$Ary).map(pairs => {
