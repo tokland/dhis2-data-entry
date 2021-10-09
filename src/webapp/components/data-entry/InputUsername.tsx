@@ -7,7 +7,7 @@ import { DataElementText } from "../../../domain/entities/DataElement";
 import i18n from "../../../locales";
 import { useCallbackEffect } from "../../hooks/use-callback-effect";
 import { useBooleanState } from "../../hooks/use-boolean";
-import { useDataEntryContext } from "./data-entry-context";
+import { useDataEntryContext } from "./DataEntryContext";
 import { InnerComponentPropsFor } from "./FormComponent";
 
 type User = { username: string };

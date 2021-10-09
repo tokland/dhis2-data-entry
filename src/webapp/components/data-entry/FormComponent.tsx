@@ -6,7 +6,7 @@ import { DataElement, ValueOf } from "../../../domain/entities/DataElement";
 import { useRefresher } from "../../hooks/use-refresher";
 import { DataElementInfo } from "./DataElementInfo";
 import { useCallbackEffect } from "../../hooks/use-callback-effect";
-import { useDataEntryContext } from "./data-entry-context";
+import { useDataEntryContext } from "./DataEntryContext";
 import {
     DataElementStatus,
     DataForm,

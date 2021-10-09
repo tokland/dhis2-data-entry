@@ -9,7 +9,7 @@ import { OrgUnit } from "../../../domain/entities/OrgUnit";
 import { DataForm as DataFormE } from "../../../domain/entities/DataForm";
 import { AnalyticsInfo, AnalyticsInfoProps } from "./AnalyticsInfo";
 import { Dropdown, DropdownItem, useSnackbar } from "@eyeseetea/d2-ui-components";
-import { DataEntryContext, DataEntryContextState } from "./data-entry-context";
+import { DataEntryContext, DataEntryContextState } from "./DataEntryContext";
 import { Future } from "../../../utils/future";
 import { PostDataValueOptions } from "../../../domain/usecases/PostDataValueUseCase";
 import { useAppContext } from "../../contexts/app-context";
