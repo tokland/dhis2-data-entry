@@ -41,7 +41,7 @@ export function getDataElementsFromDataForm(dataForm: DataForm): Record<string, 
         .map(([key, code]) => {
             const dataElement = dataElementsByCode[code];
             if (!dataElement) {
-                console.error(`Data element not found in dataSet ${dataForm.id}: ${code}`);
+                console.error(`Data element not found in dataSet ${dataForm.dataSet.id}: ${code}`);
                 return null;
             } else {
                 return [key, dataElement] as [typeof key, typeof dataElement];

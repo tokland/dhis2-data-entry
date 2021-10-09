@@ -35,7 +35,6 @@ export const DataEntryPage: React.FC<DataEntryPageProps> = React.memo(() => {
     };
 
     const dataForm: DataForm = {
-        id: "dataForm-NQOwInnRDNL",
         dataSet: {
             id: "NQOwInnRDNL",
             name: "Example form",

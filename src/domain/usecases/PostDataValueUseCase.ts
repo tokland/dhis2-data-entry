@@ -77,7 +77,7 @@ function getDataValueToPost(options: {
     return {
         period: period,
         orgUnitId,
-        dataSetId: dataForm.id,
+        dataSetId: dataForm.dataSet.id,
         dataElementId: dataElement.id,
         value: getDataElementStringValue(dataElement, getValue(dataForm, dataElement)),
         defaultValue: getDefaultValue(dataElement),

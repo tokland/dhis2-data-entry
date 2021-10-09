@@ -83,7 +83,7 @@ export const DataEntry: React.FC<DataEntryProps> = React.memo(props => {
 
                             {period && (
                                 <DataForm
-                                    key={[dataForm.id, period, orgUnit.id].join("-")}
+                                    key={[dataForm.dataSet.id, period, orgUnit.id].join("-")}
                                     dataForm={dataForm}
                                     period={period}
                                     orgUnit={orgUnit}

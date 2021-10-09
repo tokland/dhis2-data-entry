@@ -25,14 +25,14 @@ export const DataValueComment: React.FC<DataValueCommentProps> = React.memo(prop
         (ev: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => {
             const comment = ev.target.value;
             const { orgUnit, dataForm, period } = dataEntry;
-            const dataFormId = dataForm.id;
+            const dataSetId = dataForm.dataSet.id;
 
             setState("saving");
 
             return compositionRoot.dataValues.postComment
                 .execute({
                     orgUnitId: orgUnit.id,
-                    dataFormId,
+                    dataSetId: dataSetId,
                     period,
                     dataElement,
                     comment,

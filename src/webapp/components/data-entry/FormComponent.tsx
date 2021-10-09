@@ -114,7 +114,7 @@ export function FormComponent<DE extends DataElement>(props: FormComponentPropsF
     const { enabled, visible } = getDataElementStatus(dataForm, dataElement);
 
     return (
-        <div>
+        <>
             <Component
                 value={getValue(dataForm, dataElement)}
                 key={refreshKey}
@@ -126,7 +126,7 @@ export function FormComponent<DE extends DataElement>(props: FormComponentPropsF
             />
 
             <DataElementInfo dataElement={dataElement} dataEntry={dataEntry} onChange={notifyCommentSave} />
-        </div>
+        </>
     );
 }
 

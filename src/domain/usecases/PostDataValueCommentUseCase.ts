@@ -9,15 +9,15 @@ export class PostDataValueCommentUseCase {
     execute(options: {
         orgUnitId: Id;
         period: string;
-        dataFormId: Id;
+        dataSetId: Id;
         dataElement: DataElement;
         comment: string;
     }): FutureData<void> {
-        const { dataElement, dataFormId, comment } = options;
+        const { dataElement, dataSetId, comment } = options;
 
         return this.dataValueRepository.postValue({
             dataValue: {
-                dataSetId: dataFormId,
+                dataSetId: dataSetId,
                 orgUnitId: options.orgUnitId,
                 period: options.period,
                 dataElementId: dataElement.id,

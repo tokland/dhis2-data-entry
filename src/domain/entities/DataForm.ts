@@ -9,7 +9,6 @@ import { Maybe } from "../../utils/ts-utils";
 import { DataSet, DataSetSection } from "./DataSet";
 
 export interface DataForm {
-    id: Id;
     dataSet: DataSet;
     values: Record<DataElementId, Maybe<DataElementValue>>;
     comments: Record<DataElementId, Maybe<string>>;
@@ -27,7 +26,7 @@ export interface DataElementStatus {
 export type DataElementEnabledStatus = { type: "enabled" } | { type: "disabled"; reason: string };
 
 export function isDataElementVisible(dataForm: DataForm, dataElement: DataElement): boolean {
-    return dataForm.dataElementsStatus[dataElement.id]?.visible || false;
+    return getDataElementStatus(dataForm, dataElement).visible;
 }
 
 const defaultDataElementStatus: DataElementStatus = { visible: true, enabled: { type: "enabled" } };

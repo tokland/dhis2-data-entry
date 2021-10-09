@@ -29,7 +29,7 @@ export class GetDataFormUseCase {
 
         const dataValues$ = dataValueRepository.get({
             orgUnitIds: [orgUnitId],
-            dataSetIds: [dataForm.id],
+            dataSetIds: [dataForm.dataSet.id],
             periods: [period],
         });
 

@@ -15,7 +15,7 @@ interface DataEntryOrgUnit {
 }
 
 export function getDataEntryKey(dataEntry: DataEntry): string {
-    return [dataEntry.dataForm.id, dataEntry.period, dataEntry.orgUnit.id].join(".");
+    return [dataEntry.dataForm.dataSet.id, dataEntry.period, dataEntry.orgUnit.id].join(".");
 }
 
 export function getDataEntryTitle(dataEntry: DataEntry): string {
