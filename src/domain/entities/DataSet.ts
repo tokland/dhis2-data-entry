@@ -4,7 +4,7 @@ import { DataFormLogic } from "./DataFormLogic";
 import { Indicator } from "./Indicator";
 
 export interface DataSet {
-    id: Id;
+    id: DataSetId;
     name: string;
     sections: DataSetSection[];
     organisationUnits: Set<Id>;
@@ -16,10 +16,12 @@ export interface DataSet {
 }
 
 export interface DataSetSection {
-    id: string;
+    id: DataSetSectionId;
     name: string;
     dataElementIds: Id[];
     indicatorIds: Id[];
-    // TODO: Move out
-    visible: boolean;
 }
+
+export type DataSetId = Id;
+
+export type DataSetSectionId = Id;

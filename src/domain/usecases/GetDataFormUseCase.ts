@@ -59,6 +59,7 @@ export class GetDataFormUseCase {
                 dataElementsStatus: {},
                 indicatorsStatus: {},
                 indicatorValues: {},
+                sectionsStatus: {},
                 constants: {},
             };
 

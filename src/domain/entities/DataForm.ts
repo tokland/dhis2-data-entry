@@ -6,7 +6,7 @@ import { Indicator, IndicatorId } from "./Indicator";
 import { applyRulesToDataForm } from "./Rule";
 import { sortDataItems, SortingInfo } from "./DataItem";
 import { Maybe } from "../../utils/ts-utils";
-import { DataSet, DataSetSection } from "./DataSet";
+import { DataSet, DataSetSection, DataSetSectionId } from "./DataSet";
 
 export interface DataForm {
     dataSet: DataSet;
@@ -14,10 +14,11 @@ export interface DataForm {
     orgUnit: DataEntryOrgUnit;
     values: Record<DataElementId, Maybe<DataElementValue>>;
     comments: Record<DataElementId, Maybe<string>>;
+    dataElementsStatus: Record<DataElementId, DataElementStatus>;
     indicatorValues: Record<IndicatorId, string>;
     indicatorsStatus: Record<IndicatorId, IndicatorStatus>;
+    sectionsStatus: Record<DataSetSectionId, SectionStatus>;
     constants: Record<Code, number>;
-    dataElementsStatus: Record<DataElementId, DataElementStatus>;
 }
 
 interface DataEntryOrgUnit {
@@ -34,12 +35,33 @@ export interface IndicatorStatus {
     visible: boolean;
 }
 
+export interface SectionStatus {
+    visible: boolean;
+}
+
 export function getDataFormId(dataForm: DataForm): string {
     return [dataForm.dataSet.id, dataForm.period, dataForm.orgUnit.id].join("-");
 }
 
+export function isSectionVisible(dataForm: DataForm, section: DataSetSection): boolean {
+    const status = dataForm.sectionsStatus[section.id] || defaultSectionStatus;
+    return status.visible;
+}
+
+export function setSectionVisibility(
+    dataForm: DataForm,
+    section: DataSetSection,
+    isVisible: boolean
+): DataForm {
+    const prevStatus = dataForm.sectionsStatus[section.id];
+    const newStatus: SectionStatus = { ...defaultSectionStatus, ...prevStatus, visible: isVisible };
+    const sectionsStatus = { ...dataForm.sectionsStatus, [section.id]: newStatus };
+    return { ...dataForm, sectionsStatus };
+}
+
 const defaultDataElementStatus: DataElementStatus = { visible: true, enabled: { type: "enabled" } };
 const defaultIndicatorStatus: IndicatorStatus = { visible: true };
+const defaultSectionStatus: SectionStatus = { visible: true };
 
 export type DataElementEnabledStatus = { type: "enabled" } | { type: "disabled"; reason: string };
 
@@ -57,15 +79,8 @@ export function setIndicatorVisibility(
     isVisible: boolean
 ): DataForm {
     const prevStatus = dataForm.indicatorsStatus[indicator.id];
-    const newStatus: IndicatorStatus = {
-        ...defaultIndicatorStatus,
-        ...prevStatus,
-        visible: isVisible,
-    };
-    const indicatorsStatus = {
-        ...dataForm.indicatorsStatus,
-        [indicator.id]: newStatus,
-    };
+    const newStatus: IndicatorStatus = { ...defaultIndicatorStatus, ...prevStatus, visible: isVisible };
+    const indicatorsStatus = { ...dataForm.indicatorsStatus, [indicator.id]: newStatus };
     return { ...dataForm, indicatorsStatus };
 }
 

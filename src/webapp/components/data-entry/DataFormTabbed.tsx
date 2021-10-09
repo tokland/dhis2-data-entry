@@ -7,6 +7,7 @@ import {
     getDataItemsForSection,
     isDataElementVisible,
     isIndicatorVisible,
+    isSectionVisible,
 } from "../../../domain/entities/DataForm";
 import { TabPanel } from "./TabPanel";
 import { Collapse } from "@material-ui/core";
@@ -22,7 +23,7 @@ interface DataFormTabbedProps {
 export const DataFormTabbed: React.FC<DataFormTabbedProps> = React.memo(props => {
     const { dataForm, setDataForm } = props;
     const [currentSectionIdx, setCurrentSectionIdxFromOnChange] = useSectionState(0);
-    const sections = dataForm.dataSet.sections.filter(section => section.visible);
+    const sections = dataForm.dataSet.sections.filter(section => isSectionVisible(dataForm, section));
 
     return (
         <div>

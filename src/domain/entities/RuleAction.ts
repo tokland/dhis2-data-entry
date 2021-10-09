@@ -6,6 +6,7 @@ import {
     enableDataElement,
     disableDataElement,
     setIndicatorVisibility,
+    setSectionVisibility,
 } from "./DataForm";
 import { Indicator } from "./Indicator";
 
@@ -31,10 +32,13 @@ export function runAction(dataForm: DataForm, action: RuleAction): DataForm {
 
         case "setSectionVisibility": {
             const { sectionName, isVisible } = action;
-            const sectionsUpdated = dataForm.dataSet.sections.map(section =>
-                section.name === sectionName ? { ...section, visible: isVisible } : section
-            );
-            return { ...dataForm, dataSet: { ...dataForm.dataSet, sections: sectionsUpdated } };
+            const section = dataForm.dataSet.sections.find(section => section.name === sectionName);
+            if (section) {
+                return setSectionVisibility(dataForm, section, isVisible);
+            } else {
+                console.error(`Section not found: name=${sectionName}`);
+                return dataForm;
+            }
         }
 
         case "setIndicatorVisibility": {
@@ -44,10 +48,7 @@ export function runAction(dataForm: DataForm, action: RuleAction): DataForm {
 
         case "setDataElementValue": {
             const { dataElement, value } = action;
-            const dataFormDataElement = dataForm.dataSet.dataElements[dataElement.id];
-            return dataFormDataElement
-                ? setDataElementValueFromString(dataForm, dataFormDataElement, value)
-                : dataForm;
+            return setDataElementValueFromString(dataForm, dataElement, value);
         }
 
         case "setDataElementEditable": {

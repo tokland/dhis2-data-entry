@@ -30,7 +30,6 @@ export const DataEntryPage: React.FC<DataEntryPageProps> = React.memo(() => {
         name: "Section 1",
         dataElementIds: ["WmKwIxATeAB", "RivqZao3W5N"],
         indicatorIds: [],
-        visible: true,
     };
 
     const dataSet: DataSet = {
