@@ -39,7 +39,7 @@ export const DataEntryPage: React.FC<DataEntryPageProps> = React.memo(() => {
         organisationUnits: new Set(["qhFcrUfkuL6"]),
         dataElements: { [dataElement.id]: dataElement, [dataElement2.id]: dataElement2 },
         indicators: {},
-        periods: ["2020", "2021"],
+        periods: ["2021", "2022"],
         logic: {
             entities: { dataElements: {} },
             rules: [],

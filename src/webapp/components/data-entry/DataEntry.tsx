@@ -33,7 +33,7 @@ export const DataEntry: React.FC<DataEntryProps> = React.memo(props => {
 
     const rootIds = React.useMemo(() => config.currentUser.orgUnitsCapture.map(getId), [config]);
 
-    const [period, setPeriod] = React.useState<string | undefined>("2021");
+    const [period, setPeriod] = React.useState<string | undefined>(() => dataSet.periods[0]);
 
     const periodItems: DropdownItem[] = React.useMemo(
         () => dataSet.periods.map(period => ({ value: period, text: period })),
