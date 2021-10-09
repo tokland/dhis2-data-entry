@@ -3,8 +3,7 @@ import i18n from "@dhis2/d2-i18n";
 import axios from "axios";
 import _ from "lodash";
 import ReactDOM from "react-dom";
-import { Instance } from "./data/entities/Instance";
-import { getD2APiFromInstance } from "./utils/d2-api";
+import { D2Api } from "./types/d2-api";
 import App from "./webapp/pages/app/App";
 
 async function getBaseUrl() {
@@ -31,11 +30,10 @@ async function main() {
     const baseUrl = await getBaseUrl();
 
     try {
-        const instance = new Instance({ url: baseUrl });
-        const api = getD2APiFromInstance(instance);
-        Object.assign(window, { api });
-
+        const api = new D2Api({ baseUrl, backend: "fetch" });
         const userSettings = await api.get<{ keyUiLocale: string }>("/userSettings").getData();
+
+        Object.assign(window, { api });
         configI18n(userSettings);
 
         ReactDOM.render(
